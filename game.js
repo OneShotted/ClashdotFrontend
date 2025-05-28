@@ -53,9 +53,8 @@ function draw() {
   const camX = player.x - canvas.width / 2;
   const camY = player.y - canvas.height / 2;
 
-  // Example: draw background (optional)
-  // ctx.fillStyle = '#eee';
-  // ctx.fillRect(-camX, -camY, worldWidth, worldHeight);
+  // Draw the terrain background
+  drawTerrain(camX, camY);
 
   // Draw player in center of screen
   ctx.beginPath();
@@ -63,8 +62,9 @@ function draw() {
   ctx.fillStyle = 'blue';
   ctx.fill();
 
-  // If you have other objects, draw them relative to camX/camY
-  // e.g. ctx.fillRect(enemy.x - camX, enemy.y - camY, 20, 20);
+  // Draw other objects relative to camX/camY if needed
+  // Example:
+  // ctx.fillRect(enemy.x - camX, enemy.y - camY, 20, 20);
 }
 
 
