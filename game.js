@@ -18,6 +18,26 @@ const keys = {};
 
 window.addEventListener('keydown', e => keys[e.key] = true);
 window.addEventListener('keyup', e => keys[e.key] = false);
+function drawTerrain(camX, camY) {
+  // Fill background with grass color
+  ctx.fillStyle = '#7cfc00'; // grass green
+  ctx.fillRect(-camX, -camY, worldWidth, worldHeight);
+
+  // Optional: grid overlay (like a battlefield or zones)
+  ctx.strokeStyle = '#ccc';
+  for (let x = 0; x < worldWidth; x += 100) {
+    ctx.beginPath();
+    ctx.moveTo(x - camX, 0 - camY);
+    ctx.lineTo(x - camX, worldHeight - camY);
+    ctx.stroke();
+  }
+  for (let y = 0; y < worldHeight; y += 100) {
+    ctx.beginPath();
+    ctx.moveTo(0 - camX, y - camY);
+    ctx.lineTo(worldWidth - camX, y - camY);
+    ctx.stroke();
+  }
+}
 
 function update() {
   if (keys['w']) player.y -= player.speed;
