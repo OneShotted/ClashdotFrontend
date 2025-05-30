@@ -1,8 +1,16 @@
-// Setup canvas and context
+// Get canvas and context
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-// Define world size (the playable area)
+// Resize canvas to fill window
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// Define world size
 const worldWidth = 2000;
 const worldHeight = 2000;
 
@@ -14,16 +22,25 @@ let player = {
   speed: 3
 };
 
+// Input tracking
 const keys = {};
-
 window.addEventListener('keydown', e => keys[e.key] = true);
 window.addEventListener('keyup', e => keys[e.key] = false);
+
+// Game loop
+function update() {
+  if (keys['w'] && player.y > 0) player.y -= player.speed;
+  if (keys['s'] && player.y < worldHeight) player.y += player.speed;
+  if (keys['a'] && player.x > 0) player.x -= player.speed;
+  if (keys['d'] && player.x < worldWidth) player.x += player.speed;
+}
+
 function drawTerrain(camX, camY) {
-  // Fill background with grass color
-  ctx.fillStyle = '#7cfc00'; // grass green
+  // Grass background
+  ctx.fillStyle = '#7cfc00';
   ctx.fillRect(-camX, -camY, worldWidth, worldHeight);
 
-  // Optional: grid overlay (like a battlefield or zones)
+  // Grid overlay
   ctx.strokeStyle = '#ccc';
   for (let x = 0; x < worldWidth; x += 100) {
     ctx.beginPath();
@@ -39,34 +56,20 @@ function drawTerrain(camX, camY) {
   }
 }
 
-function update() {
-  if (keys['w']) player.y -= player.speed;
-  if (keys['s']) player.y += player.speed;
-  if (keys['a']) player.x -= player.speed;
-  if (keys['d']) player.x += player.speed;
-}
-
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Camera offset: center the player
   const camX = player.x - canvas.width / 2;
   const camY = player.y - canvas.height / 2;
 
-  // Draw the terrain background
   drawTerrain(camX, camY);
 
-  // Draw player in center of screen
+  // Draw player in center
   ctx.beginPath();
   ctx.arc(canvas.width / 2, canvas.height / 2, player.radius, 0, Math.PI * 2);
   ctx.fillStyle = 'blue';
   ctx.fill();
-
-  // Draw other objects relative to camX/camY if needed
-  // Example:
-  // ctx.fillRect(enemy.x - camX, enemy.y - camY, 20, 20);
 }
-
 
 function gameLoop() {
   update();
