@@ -10,7 +10,7 @@
   <div id="username-screen">
     <h1>Enter Username</h1>
     <input id="username-input" placeholder="Username..." />
-    <button id="start-button">Play</button>
+    <button id="start-button">Start Game</button>
   </div>
 
   <canvas id="gameCanvas"></canvas>
@@ -31,14 +31,16 @@
     </div>
   </div>
 
-  <!-- Changelog Panel -->
-  <div id="changelog-panel">
+  <!-- Changelog -->
+  <div id="changelog">
     <h2>Changelog</h2>
-    <div id="changelog-content"></div>
+    <ul>
+      <li>Added developer panel (kick, teleport, broadcast)</li>
+      <li>Improved chat system with red dev messages</li>
+      <li>Player movement with Arrow Keys and WASD</li>
+      <li>Changelog display added</li>
+    </ul>
   </div>
-
-  <!-- Changelog Toggle Button -->
-  <button id="changelog-toggle">Changelog</button>
 
   <script src="game.js"></script>
 </body>
