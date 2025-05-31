@@ -1,135 +1,79 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+const chatLog = document.getElementById('chat-log');
+const chatInput = document.getElementById('chat-input');
+const sendChatBtn = document.getElementById('send-chat');
 
-const worldWidth = 2000;
-const worldHeight = 2000;
+let playerName = prompt("Enter your username:");
+if (!playerName) playerName = "Player" + Math.floor(Math.random() * 1000);
 
-let player = {
-  x: worldWidth / 2,
-  y: worldHeight / 2,
-  radius: 20,
-  speed: 3
-};
+const socket = new WebSocket('wss://websocket-1-xib5.onrender.com');
 
 let playerId = null;
-let allPlayers = {};
-let socket = null;
-let playerName = null;
+let players = {};
 
-// Chat elements
-const chatInput = document.getElementById('chatInput');
-const sendChatBtn = document.getElementById('sendChatBtn');
-const chatLog = document.getElementById('chatLog');
+socket.onopen = () => {
+  socket.send(JSON.stringify({ type: 'register', name: playerName }));
+};
 
-document.getElementById('startBtn').onclick = () => {
-  playerName = document.getElementById('usernameInput').value.trim();
-  if (!playerName) return;
-
-  document.getElementById('usernameOverlay').style.display = 'none';
-
-  socket = new WebSocket('wss://websocket-1-xib5.onrender.com');
-
-  socket.onopen = () => {
-    socket.send(JSON.stringify({ type: 'register', name: playerName }));
-  };
-
-  socket.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    if (data.type === 'init') {
-      playerId = data.id;
-      allPlayers = data.players;
-    } else if (data.type === 'update') {
-      allPlayers = data.players;
-    } else if (data.type === 'chat') {
-      const chatEntry = document.createElement('div');
-      chatEntry.textContent = `${data.name}: ${data.message}`;
-      chatLog.appendChild(chatEntry);
-      chatLog.scrollTop = chatLog.scrollHeight;
-    }
-  };
+socket.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  if (data.type === 'init') {
+    playerId = data.id;
+  } else if (data.type === 'state') {
+    players = data.players;
+  } else if (data.type === 'chat') {
+    const chatEntry = document.createElement('div');
+    chatEntry.textContent = `${data.name}: ${data.message}`;
+    chatLog.appendChild(chatEntry);
+    chatLog.scrollTop = chatLog.scrollHeight;
+  }
 };
 
 sendChatBtn.onclick = () => {
   const message = chatInput.value.trim();
-  if (message && socket && socket.readyState === WebSocket.OPEN) {
+  if (message && socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify({ type: 'chat', message }));
     chatInput.value = '';
   }
 };
 
-const keys = {};
-window.addEventListener('keydown', e => keys[e.key] = true);
-window.addEventListener('keyup', e => keys[e.key] = false);
+const player = { x: 300, y: 300, radius: 20, speed: 8 };
 
-function drawTerrain(camX, camY) {
-  ctx.fillStyle = '#7cfc00';
-  ctx.fillRect(-camX, -camY, worldWidth, worldHeight);
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowUp') player.y -= player.speed;
+  if (e.key === 'ArrowDown') player.y += player.speed;
+  if (e.key === 'ArrowLeft') player.x -= player.speed;
+  if (e.key === 'ArrowRight') player.x += player.speed;
 
-  ctx.strokeStyle = '#ccc';
-  for (let x = 0; x < worldWidth; x += 100) {
-    ctx.beginPath();
-    ctx.moveTo(x - camX, 0 - camY);
-    ctx.lineTo(x - camX, worldHeight - camY);
-    ctx.stroke();
-  }
-  for (let y = 0; y < worldHeight; y += 100) {
-    ctx.beginPath();
-    ctx.moveTo(0 - camX, y - camY);
-    ctx.lineTo(worldWidth - camX, y - camY);
-    ctx.stroke();
-  }
-}
-
-function update() {
-  if (keys['w']) player.y -= player.speed;
-  if (keys['s']) player.y += player.speed;
-  if (keys['a']) player.x -= player.speed;
-  if (keys['d']) player.x += player.speed;
-
-  if (playerId && socket && socket.readyState === WebSocket.OPEN) {
-    socket.send(JSON.stringify({
-      type: 'move',
-      pos: { x: player.x, y: player.y }
-    }));
-  }
-}
+  socket.send(JSON.stringify({ type: 'move', x: player.x, y: player.y }));
+});
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
   const camX = player.x - canvas.width / 2;
   const camY = player.y - canvas.height / 2;
 
-  drawTerrain(camX, camY);
-
-  for (let id in allPlayers) {
-    const p = allPlayers[id];
+  // Draw other players
+  for (const id in players) {
+    const p = players[id];
     const screenX = p.x - camX;
     const screenY = p.y - camY;
-
     ctx.beginPath();
     ctx.arc(screenX, screenY, 20, 0, Math.PI * 2);
     ctx.fillStyle = id === playerId ? 'blue' : 'red';
     ctx.fill();
-
     ctx.fillStyle = 'white';
-    ctx.font = '16px sans-serif';
+    ctx.font = '14px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(id === playerId ? 'You' : p.name || 'Player', screenX, screenY - 30);
+    ctx.fillText(p.name, screenX, screenY - 25);
   }
+
+  requestAnimationFrame(draw);
 }
 
-function gameLoop() {
-  update();
-  draw();
-  requestAnimationFrame(gameLoop);
-}
-
-gameLoop();
-
+draw();
