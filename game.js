@@ -1,8 +1,7 @@
-// Get canvas and context
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-// Resize canvas to fill window
+// Fullscreen canvas
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -10,37 +9,43 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// Define world size
+// Game world and player
 const worldWidth = 2000;
 const worldHeight = 2000;
 
-// Player setup
 let player = {
   x: worldWidth / 2,
   y: worldHeight / 2,
   radius: 20,
-  speed: 10
+  speed: 3
 };
 
-// Input tracking
+let playerId = null;
+let allPlayers = {};
+
+// ✅ Connect to your live WebSocket server
+const socket = new WebSocket('wss://websocket-1-xib5.onrender.com');
+
+socket.onmessage = function(event) {
+  const data = JSON.parse(event.data);
+  if (data.type === 'init') {
+    playerId = data.id;
+    allPlayers = data.players;
+  } else if (data.type === 'update') {
+    allPlayers = data.players;
+  }
+};
+
+// Controls
 const keys = {};
 window.addEventListener('keydown', e => keys[e.key] = true);
 window.addEventListener('keyup', e => keys[e.key] = false);
 
-// Game loop
-function update() {
-  if (keys['w'] && player.y > 0) player.y -= player.speed;
-  if (keys['s'] && player.y < worldHeight) player.y += player.speed;
-  if (keys['a'] && player.x > 0) player.x -= player.speed;
-  if (keys['d'] && player.x < worldWidth) player.x += player.speed;
-}
-
+// Terrain
 function drawTerrain(camX, camY) {
-  // Grass background
   ctx.fillStyle = '#7cfc00';
   ctx.fillRect(-camX, -camY, worldWidth, worldHeight);
 
-  // Grid overlay
   ctx.strokeStyle = '#ccc';
   for (let x = 0; x < worldWidth; x += 100) {
     ctx.beginPath();
@@ -56,19 +61,37 @@ function drawTerrain(camX, camY) {
   }
 }
 
+// Game loop
+function update() {
+  if (keys['w']) player.y -= player.speed;
+  if (keys['s']) player.y += player.speed;
+  if (keys['a']) player.x -= player.speed;
+  if (keys['d']) player.x += player.speed;
+
+  if (playerId && socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify({
+      type: 'move',
+      pos: { x: player.x, y: player.y }
+    }));
+  }
+}
+
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
   const camX = player.x - canvas.width / 2;
   const camY = player.y - canvas.height / 2;
 
   drawTerrain(camX, camY);
 
-  // Draw player in center
-  ctx.beginPath();
-  ctx.arc(canvas.width / 2, canvas.height / 2, player.radius, 0, Math.PI * 2);
-  ctx.fillStyle = 'yellow';
-  ctx.fill();
+  for (let id in allPlayers) {
+    const p = allPlayers[id];
+    const screenX = p.x - camX;
+    const screenY = p.y - camY;
+    ctx.beginPath();
+    ctx.arc(screenX, screenY, 20, 0, Math.PI * 2);
+    ctx.fillStyle = id === playerId ? 'blue' : 'red';
+    ctx.fill();
+  }
 }
 
 function gameLoop() {
@@ -78,3 +101,4 @@ function gameLoop() {
 }
 
 gameLoop();
+
