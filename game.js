@@ -22,57 +22,6 @@ const devPlayerList = document.getElementById('dev-player-list');
 const broadcastInput = document.getElementById('broadcast-input');
 const broadcastBtn = document.getElementById('broadcast-btn');
 
-const changelogToggleBtn = document.getElementById('changelog-toggle');
-const changelogPanel = document.getElementById('changelog-panel');
-const changelogContent = document.getElementById('changelog-content');
-
-const changelogEntries = [
-  {
-    version: "v1.2.0",
-    date: "May 31, 2025",
-    details: [
-      "🔧 Fixed developer kick and teleport powers.",
-      "💬 Chat system added.",
-      "🧑‍💻 Developer panel now shows player list with controls.",
-    ]
-  },
-  {
-    version: "v1.1.0",
-    date: "May 30, 2025",
-    details: [
-      "🎮 Added WASD support.",
-      "🖥️ Enter username on a dedicated screen.",
-      "🌄 Background grid and camera logic improved."
-    ]
-  },
-  {
-    version: "v1.0.0",
-    date: "May 29, 2025",
-    details: [
-      "🚀 Initial release!",
-      "Multiplayer movement and player names."
-    ]
-  }
-];
-
-function loadChangelog() {
-  changelogContent.innerHTML = '';
-  changelogEntries.forEach(entry => {
-    const section = document.createElement('div');
-    section.innerHTML = `
-      <h3>${entry.version} – ${entry.date}</h3>
-      <ul>${entry.details.map(d => `<li>${d}</li>`).join('')}</ul>
-    `;
-    changelogContent.appendChild(section);
-  });
-}
-
-changelogToggleBtn.onclick = () => {
-  const visible = changelogPanel.style.display === 'block';
-  changelogPanel.style.display = visible ? 'none' : 'block';
-  if (!visible) loadChangelog();
-};
-
 startButton.onclick = () => {
   playerName = usernameInput.value.trim();
   if (playerName) {
@@ -104,6 +53,13 @@ function initSocket() {
     } else if (data.type === 'chat') {
       const msg = document.createElement('div');
       msg.textContent = `${data.name}: ${data.message}`;
+
+      // RED for dev or broadcast
+      if (data.name === 'CharmedZ#1627' || data.isBroadcast) {
+        msg.style.color = 'red';
+        msg.style.fontWeight = 'bold';
+      }
+
       chatLog.appendChild(msg);
       chatLog.scrollTop = chatLog.scrollHeight;
     }
@@ -147,6 +103,15 @@ broadcastBtn.onclick = () => {
   const msg = broadcastInput.value.trim();
   if (msg) {
     socket.send(JSON.stringify({ type: 'devCommand', command: 'broadcast', message: msg }));
+
+    // Show locally as red
+    const broadcastMsg = document.createElement('div');
+    broadcastMsg.textContent = `Broadcast: ${msg}`;
+    broadcastMsg.style.color = 'red';
+    broadcastMsg.style.fontWeight = 'bold';
+    chatLog.appendChild(broadcastMsg);
+    chatLog.scrollTop = chatLog.scrollHeight;
+
     broadcastInput.value = '';
   }
 };
