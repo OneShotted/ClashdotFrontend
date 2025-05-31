@@ -24,13 +24,29 @@
   <!-- Developer Panel -->
   <div id="dev-panel">
     <h3>Developer Panel</h3>
-    <button onclick="teleport()">Teleport Randomly</button>
-    <input id="kick-name" placeholder="Username to kick" />
-    <button onclick="kickPlayer()">Kick</button>
-    <input id="broadcast-msg" placeholder="Broadcast message" />
-    <button onclick="broadcast()">Broadcast</button>
+
+    <div>
+      <label>Kick Player ID:</label><br/>
+      <input id="kick-id" placeholder="player id" />
+      <button id="kick-player-btn">Kick</button>
+    </div>
+
+    <div style="margin-top:10px;">
+      <label>Teleport Player:</label><br/>
+      <input id="teleport-id" placeholder="player id" />
+      <input id="teleport-x" placeholder="x" style="width: 50px;" />
+      <input id="teleport-y" placeholder="y" style="width: 50px;" />
+      <button id="teleport-player-btn">Teleport</button>
+    </div>
+
+    <div style="margin-top:10px;">
+      <label>Broadcast Message:</label><br/>
+      <input id="broadcast-msg" placeholder="message" />
+      <button id="broadcast-btn">Broadcast</button>
+    </div>
   </div>
 
   <script src="game.js"></script>
 </body>
 </html>
+
