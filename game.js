@@ -6,17 +6,16 @@ canvas.height = window.innerHeight;
 const chatLog = document.getElementById('chat-log');
 const chatInput = document.getElementById('chat-input');
 const sendChatBtn = document.getElementById('send-chat');
+const chatContainer = document.getElementById('chat-container');
 
-let playerName = prompt("Enter your username:");
-if (!playerName) playerName = "Player" + Math.floor(Math.random() * 1000);
-
-const socket = new WebSocket('wss://websocket-1-xib5.onrender.com');
-
+let playerName = '';
 let playerId = null;
 let players = {};
 
+const socket = new WebSocket('wss://websocket-1-xib5.onrender.com');
+
 socket.onopen = () => {
-  socket.send(JSON.stringify({ type: 'register', name: playerName }));
+  // Register happens after name is submitted in startGame()
 };
 
 socket.onmessage = (event) => {
@@ -41,7 +40,7 @@ sendChatBtn.onclick = () => {
   }
 };
 
-const player = { x: 300, y: 300, radius: 20, speed: 8 };
+const player = { x: 300, y: 300, radius: 20, speed: 2 };
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowUp') player.y -= player.speed;
@@ -58,7 +57,6 @@ function draw() {
   const camX = player.x - canvas.width / 2;
   const camY = player.y - canvas.height / 2;
 
-  // Draw other players
   for (const id in players) {
     const p = players[id];
     const screenX = p.x - camX;
@@ -76,4 +74,19 @@ function draw() {
   requestAnimationFrame(draw);
 }
 
-draw();
+function startGame() {
+  const nameInput = document.getElementById('username-input');
+  playerName = nameInput.value.trim() || `Player${Math.floor(Math.random() * 1000)}`;
+  document.getElementById('username-screen').style.display = 'none';
+  chatContainer.style.display = 'block';
+
+  if (socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify({ type: 'register', name: playerName }));
+  } else {
+    socket.onopen = () => {
+      socket.send(JSON.stringify({ type: 'register', name: playerName }));
+    };
+  }
+
+  draw();
+}
