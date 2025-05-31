@@ -21,7 +21,7 @@ startButton.onclick = () => {
   playerName = usernameInput.value.trim();
   if (playerName) {
     usernameScreen.style.display = 'none';
-    chatContainer.style.display = 'block';
+    chatContainer.style.display = 'flex';
     initSocket();
   }
 };
@@ -60,6 +60,7 @@ sendChatBtn.onclick = () => {
 // Movement
 document.addEventListener('keydown', (e) => {
   if (!playerId || !socket || socket.readyState !== WebSocket.OPEN) return;
+  if (document.activeElement === chatInput) return;
 
   const key = e.key.toLowerCase();
 
