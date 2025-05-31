@@ -62,12 +62,13 @@ body {
 }
 
 #dev-panel {
+  display: none;
   position: fixed;
   top: 20px;
   right: 20px;
-  background: rgba(255, 255, 0, 0.8);
-  padding: 10px;
-  border-radius: 8px;
-  display: none;
-  z-index: 100;
+  background: #eeeeee;
+  padding: 12px;
+  border-radius: 10px;
+  width: 240px;
+  font-size: 14px;
 }
