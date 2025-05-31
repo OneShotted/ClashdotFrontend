@@ -19,7 +19,7 @@ let player = {
   x: worldWidth / 2,
   y: worldHeight / 2,
   radius: 20,
-  speed: 3
+  speed: 10
 };
 
 // Input tracking
