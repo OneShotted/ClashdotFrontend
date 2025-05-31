@@ -49,7 +49,7 @@ function initSocket() {
   };
 }
 
-// Chat
+// Chat system
 sendChatBtn.onclick = () => {
   const message = chatInput.value.trim();
   if (message && socket.readyState === WebSocket.OPEN) {
@@ -58,28 +58,24 @@ sendChatBtn.onclick = () => {
   }
 };
 
-// Movement (Arrow Keys and WASD)
+// Movement (WASD and Arrow Keys)
 document.addEventListener('keydown', (e) => {
-  if (!playerId || !socket) return;
+  if (!playerId || !socket || socket.readyState !== WebSocket.OPEN) return;
 
-  const keyMap = {
-    'arrowup': 'up',
-    'arrowdown': 'down',
-    'arrowleft': 'left',
-    'arrowright': 'right',
-    'w': 'up',
-    's': 'down',
-    'a': 'left',
-    'd': 'right',
-  };
+  const key = e.key.toLowerCase();
 
-  const direction = keyMap[e.key.toLowerCase()];
-  if (direction) {
-    socket.send(JSON.stringify({ type: 'move', key: direction }));
+  if (key === 'arrowup' || key === 'w') {
+    socket.send(JSON.stringify({ type: 'move', key: 'up' }));
+  } else if (key === 'arrowdown' || key === 's') {
+    socket.send(JSON.stringify({ type: 'move', key: 'down' }));
+  } else if (key === 'arrowleft' || key === 'a') {
+    socket.send(JSON.stringify({ type: 'move', key: 'left' }));
+  } else if (key === 'arrowright' || key === 'd') {
+    socket.send(JSON.stringify({ type: 'move', key: 'right' }));
   }
 });
 
-// Grid
+// Draw background grid
 function drawGrid(ctx, camX, camY) {
   const gridSize = 50;
   ctx.strokeStyle = '#ccc';
@@ -100,7 +96,7 @@ function drawGrid(ctx, camX, camY) {
   }
 }
 
-// Drawing the world
+// Game loop
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -113,11 +109,12 @@ function draw() {
   const camX = me.x - canvas.width / 2;
   const camY = me.y - canvas.height / 2;
 
+  // Background
   ctx.fillStyle = '#b7e2b2';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
   drawGrid(ctx, camX, camY);
 
+  // Draw all players
   for (const id in allPlayers) {
     const p = allPlayers[id];
     const x = p.x - camX;
