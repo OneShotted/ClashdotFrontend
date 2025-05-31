@@ -1,9 +1,9 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+let socket;
 let playerId = null;
 let allPlayers = {};
 let playerName = '';
@@ -16,7 +16,7 @@ const chatLog = document.getElementById('chat-log');
 const chatInput = document.getElementById('chat-input');
 const sendChatBtn = document.getElementById('send-chat');
 
-// Username screen
+// Username screen logic
 startButton.onclick = () => {
   playerName = usernameInput.value.trim();
   if (playerName) {
@@ -26,7 +26,6 @@ startButton.onclick = () => {
   }
 };
 
-let socket;
 function initSocket() {
   socket = new WebSocket('wss://websocket-vavu.onrender.com');
 
@@ -36,6 +35,7 @@ function initSocket() {
 
   socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
+
     if (data.type === 'id') {
       playerId = data.id;
     } else if (data.type === 'update') {
@@ -49,16 +49,15 @@ function initSocket() {
   };
 }
 
-// Chat system
 sendChatBtn.onclick = () => {
   const message = chatInput.value.trim();
-  if (message && socket.readyState === WebSocket.OPEN) {
+  if (message && socket && socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify({ type: 'chat', message }));
     chatInput.value = '';
   }
 };
 
-// Movement (WASD and Arrow Keys)
+// Movement
 document.addEventListener('keydown', (e) => {
   if (!playerId || !socket || socket.readyState !== WebSocket.OPEN) return;
 
@@ -75,11 +74,10 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Draw background grid
-function drawGrid(ctx, camX, camY) {
+// Draw grid background
+function drawGrid(camX, camY) {
   const gridSize = 50;
-  ctx.strokeStyle = '#ccc';
-  ctx.lineWidth = 1;
+  ctx.strokeStyle = '#c3d6be';
 
   for (let x = -camX % gridSize; x < canvas.width; x += gridSize) {
     ctx.beginPath();
@@ -96,7 +94,7 @@ function drawGrid(ctx, camX, camY) {
   }
 }
 
-// Game loop
+// Main game loop
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -109,12 +107,10 @@ function draw() {
   const camX = me.x - canvas.width / 2;
   const camY = me.y - canvas.height / 2;
 
-  // Background
   ctx.fillStyle = '#b7e2b2';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  drawGrid(ctx, camX, camY);
+  drawGrid(camX, camY);
 
-  // Draw all players
   for (const id in allPlayers) {
     const p = allPlayers[id];
     const x = p.x - camX;
@@ -135,4 +131,3 @@ function draw() {
 }
 
 draw();
-
