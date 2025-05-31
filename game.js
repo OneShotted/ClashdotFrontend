@@ -22,18 +22,31 @@ let player = {
 
 let playerId = null;
 let allPlayers = {};
+let socket = null;
+let playerName = null;
 
-// ✅ Connect to your live WebSocket server
-const socket = new WebSocket('wss://websocket-1-xib5.onrender.com');
+// Username setup
+document.getElementById('startBtn').onclick = () => {
+  playerName = document.getElementById('usernameInput').value.trim();
+  if (!playerName) return;
 
-socket.onmessage = function(event) {
-  const data = JSON.parse(event.data);
-  if (data.type === 'init') {
-    playerId = data.id;
-    allPlayers = data.players;
-  } else if (data.type === 'update') {
-    allPlayers = data.players;
-  }
+  document.getElementById('usernameOverlay').style.display = 'none';
+
+  socket = new WebSocket('wss://websocket-1-xib5.onrender.com');
+
+  socket.onopen = () => {
+    socket.send(JSON.stringify({ type: 'register', name: playerName }));
+  };
+
+  socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    if (data.type === 'init') {
+      playerId = data.id;
+      allPlayers = data.players;
+    } else if (data.type === 'update') {
+      allPlayers = data.players;
+    }
+  };
 };
 
 // Controls
@@ -68,7 +81,7 @@ function update() {
   if (keys['a']) player.x -= player.speed;
   if (keys['d']) player.x += player.speed;
 
-  if (playerId && socket.readyState === WebSocket.OPEN) {
+  if (playerId && socket && socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify({
       type: 'move',
       pos: { x: player.x, y: player.y }
@@ -87,10 +100,18 @@ function draw() {
     const p = allPlayers[id];
     const screenX = p.x - camX;
     const screenY = p.y - camY;
+
+    // Draw player circle
     ctx.beginPath();
     ctx.arc(screenX, screenY, 20, 0, Math.PI * 2);
     ctx.fillStyle = id === playerId ? 'blue' : 'red';
     ctx.fill();
+
+    // Draw player name
+    ctx.fillStyle = 'white';
+    ctx.font = '16px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(id === playerId ? 'You' : p.name || 'Player', screenX, screenY - 30);
   }
 }
 
@@ -101,4 +122,3 @@ function gameLoop() {
 }
 
 gameLoop();
-
