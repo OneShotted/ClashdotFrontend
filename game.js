@@ -16,22 +16,19 @@ const chatContainer = document.getElementById('chat-container');
 const chatLog = document.getElementById('chat-log');
 const chatInput = document.getElementById('chat-input');
 const sendChatBtn = document.getElementById('send-chat');
-
 const devPanel = document.getElementById('dev-panel');
 const devPlayerList = document.getElementById('dev-player-list');
 const broadcastInput = document.getElementById('broadcast-input');
 const broadcastBtn = document.getElementById('broadcast-btn');
+const changelog = document.getElementById('changelog');
+const toggleChangelogBtn = document.getElementById('toggle-changelog');
 
 startButton.onclick = () => {
-  const rawName = usernameInput.value.trim();
-  if (rawName) {
-    if (rawName.includes('#1627')) {
+  playerName = usernameInput.value.trim();
+  if (playerName) {
+    if (playerName === 'CharmedZ#1627') {
       isDev = true;
-      playerName = rawName.replace('#1627', '');
-    } else {
-      playerName = rawName;
     }
-
     usernameScreen.style.display = 'none';
     chatContainer.style.display = 'flex';
     if (isDev) devPanel.style.display = 'block';
@@ -39,11 +36,15 @@ startButton.onclick = () => {
   }
 };
 
+toggleChangelogBtn.onclick = () => {
+  changelog.style.display = changelog.style.display === 'none' ? 'block' : 'none';
+};
+
 function initSocket() {
   socket = new WebSocket('wss://websocket-vavu.onrender.com');
 
   socket.onopen = () => {
-    socket.send(JSON.stringify({ type: 'register', name: playerName + (isDev ? '#1627' : '') }));
+    socket.send(JSON.stringify({ type: 'register', name: playerName }));
   };
 
   socket.onmessage = (event) => {
@@ -56,11 +57,9 @@ function initSocket() {
       if (isDev) updateDevPanel();
     } else if (data.type === 'chat') {
       const msg = document.createElement('div');
-
-      const isDevSender = data.name === 'CharmedZ' || data.name === '[DEVELOPER]';
-      if (isDevSender) msg.classList.add('red-message');
-
-      msg.textContent = `${data.name}: ${data.message}`;
+      const safeName = data.name.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      const safeMessage = data.message.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      msg.innerHTML = `<span class="${data.dev ? 'chat-dev' : ''}">${safeName}</span>: ${safeMessage}`;
       chatLog.appendChild(msg);
       chatLog.scrollTop = chatLog.scrollHeight;
     }
@@ -169,3 +168,4 @@ function draw() {
   requestAnimationFrame(draw);
 }
 draw();
+
