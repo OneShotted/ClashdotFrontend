@@ -57,12 +57,17 @@ function initSocket() {
     } else if (data.type === 'chat') {
       const msg = document.createElement('div');
 
-      // ✅ Only mark broadcasts as red
       if (data.name === '[DEVELOPER]') {
+        // Broadcast message: red and no name shown
         msg.classList.add('red-message');
+        msg.textContent = data.message;
+      } else {
+        // Ignore fake [DEVELOPER] usernames
+        if (data.name === '[DEVELOPER]') return;
+
+        msg.textContent = `${data.name}: ${data.message}`;
       }
 
-      msg.textContent = `${data.name}: ${data.message}`;
       chatLog.appendChild(msg);
       chatLog.scrollTop = chatLog.scrollHeight;
     }
