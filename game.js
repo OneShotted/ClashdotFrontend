@@ -16,12 +16,18 @@ const chatContainer = document.getElementById('chat-container');
 const chatLog = document.getElementById('chat-log');
 const chatInput = document.getElementById('chat-input');
 const sendChatBtn = document.getElementById('send-chat');
+
 const devPanel = document.getElementById('dev-panel');
+const devPlayerList = document.getElementById('dev-player-list');
+const broadcastInput = document.getElementById('broadcast-input');
+const broadcastBtn = document.getElementById('broadcast-btn');
 
 startButton.onclick = () => {
   playerName = usernameInput.value.trim();
   if (playerName) {
-    isDev = playerName.includes('#1627');
+    if (playerName.includes('#1627')) {
+      isDev = true;
+    }
     usernameScreen.style.display = 'none';
     chatContainer.style.display = 'flex';
     if (isDev) devPanel.style.display = 'block';
@@ -43,6 +49,7 @@ function initSocket() {
       playerId = data.id;
     } else if (data.type === 'update') {
       allPlayers = data.players;
+      if (isDev) updateDevPanel();
     } else if (data.type === 'chat') {
       const msg = document.createElement('div');
       msg.textContent = `${data.name}: ${data.message}`;
@@ -54,33 +61,64 @@ function initSocket() {
 
 sendChatBtn.onclick = () => {
   const message = chatInput.value.trim();
-  if (message && socket.readyState === WebSocket.OPEN) {
+  if (message && socket && socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify({ type: 'chat', message }));
     chatInput.value = '';
   }
 };
 
+function updateDevPanel() {
+  devPlayerList.innerHTML = '';
+  for (const id in allPlayers) {
+    const p = allPlayers[id];
+    const div = document.createElement('div');
+    div.textContent = `${p.name} (${id})`;
+
+    const kickBtn = document.createElement('button');
+    kickBtn.textContent = 'Kick';
+    kickBtn.onclick = () => {
+      socket.send(JSON.stringify({ type: 'devCommand', command: 'kick', targetId: id }));
+    };
+
+    const tpBtn = document.createElement('button');
+    tpBtn.textContent = 'TP';
+    tpBtn.onclick = () => {
+      socket.send(JSON.stringify({ type: 'devCommand', command: 'teleport', targetId: id, x: 100, y: 100 }));
+    };
+
+    div.appendChild(kickBtn);
+    div.appendChild(tpBtn);
+    devPlayerList.appendChild(div);
+  }
+}
+
+broadcastBtn.onclick = () => {
+  const msg = broadcastInput.value.trim();
+  if (msg) {
+    socket.send(JSON.stringify({ type: 'devCommand', command: 'broadcast', message: msg }));
+    broadcastInput.value = '';
+  }
+};
+
 document.addEventListener('keydown', (e) => {
-  if (!playerId || socket.readyState !== WebSocket.OPEN) return;
+  if (!playerId || !socket || socket.readyState !== WebSocket.OPEN) return;
 
   const key = e.key.toLowerCase();
-  if (['arrowup', 'w'].includes(key)) socket.send(JSON.stringify({ type: 'move', key: 'up' }));
-  if (['arrowdown', 's'].includes(key)) socket.send(JSON.stringify({ type: 'move', key: 'down' }));
-  if (['arrowleft', 'a'].includes(key)) socket.send(JSON.stringify({ type: 'move', key: 'left' }));
-  if (['arrowright', 'd'].includes(key)) socket.send(JSON.stringify({ type: 'move', key: 'right' }));
+  if (key === 'arrowup' || key === 'w') socket.send(JSON.stringify({ type: 'move', key: 'up' }));
+  if (key === 'arrowdown' || key === 's') socket.send(JSON.stringify({ type: 'move', key: 'down' }));
+  if (key === 'arrowleft' || key === 'a') socket.send(JSON.stringify({ type: 'move', key: 'left' }));
+  if (key === 'arrowright' || key === 'd') socket.send(JSON.stringify({ type: 'move', key: 'right' }));
 });
 
 function drawGrid(camX, camY) {
   const gridSize = 50;
   ctx.strokeStyle = '#c3d6be';
-
   for (let x = -camX % gridSize; x < canvas.width; x += gridSize) {
     ctx.beginPath();
     ctx.moveTo(x, 0);
     ctx.lineTo(x, canvas.height);
     ctx.stroke();
   }
-
   for (let y = -camY % gridSize; y < canvas.height; y += gridSize) {
     ctx.beginPath();
     ctx.moveTo(0, y);
@@ -122,29 +160,4 @@ function draw() {
 
   requestAnimationFrame(draw);
 }
-
 draw();
-
-// ----- DEV COMMANDS -----
-function sendDevCommand(command, payload = {}) {
-  if (socket && socket.readyState === WebSocket.OPEN) {
-    socket.send(JSON.stringify({ type: 'devCommand', command, ...payload }));
-  }
-}
-
-document.getElementById('kick-player-btn').onclick = () => {
-  const id = document.getElementById('kick-id').value.trim();
-  if (id) sendDevCommand('kick', { targetId: id });
-};
-
-document.getElementById('teleport-player-btn').onclick = () => {
-  const id = document.getElementById('teleport-id').value.trim();
-  const x = parseInt(document.getElementById('teleport-x').value.trim()) || 300;
-  const y = parseInt(document.getElementById('teleport-y').value.trim()) || 300;
-  if (id) sendDevCommand('teleport', { targetId: id, x, y });
-};
-
-document.getElementById('broadcast-btn').onclick = () => {
-  const msg = document.getElementById('broadcast-msg').value.trim();
-  if (msg) sendDevCommand('broadcast', { message: msg });
-};
