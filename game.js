@@ -67,7 +67,7 @@ function draw() {
   // Draw player in center
   ctx.beginPath();
   ctx.arc(canvas.width / 2, canvas.height / 2, player.radius, 0, Math.PI * 2);
-  ctx.fillStyle = 'blue';
+  ctx.fillStyle = 'yellow';
   ctx.fill();
 }
 
