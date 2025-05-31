@@ -57,8 +57,10 @@ function initSocket() {
     } else if (data.type === 'chat') {
       const msg = document.createElement('div');
 
-      const isDevSender = data.name === 'CharmedZ' || data.name === '[DEVELOPER]';
-      if (isDevSender) msg.classList.add('red-message');
+      // ✅ Only mark broadcasts as red
+      if (data.name === '[DEVELOPER]') {
+        msg.classList.add('red-message');
+      }
 
       msg.textContent = `${data.name}: ${data.message}`;
       chatLog.appendChild(msg);
@@ -169,5 +171,6 @@ function draw() {
   requestAnimationFrame(draw);
 }
 draw();
+
 
 
