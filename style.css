@@ -87,21 +87,26 @@ body {
 #changelog {
   position: fixed;
   top: 20px;
-  left: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 300px;
-  background: #f0f0f0;
-  border-radius: 8px;
+  background: #e0f7fa;
   padding: 10px;
+  border: 1px solid #00796b;
+  border-radius: 10px;
+  display: none;
   z-index: 15;
-  font-size: 14px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-#changelog h2 {
-  margin-top: 0;
+#toggle-changelog {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 16;
+  padding: 5px 10px;
 }
 
-.red-message {
+.chat-dev {
   color: red;
   font-weight: bold;
 }
