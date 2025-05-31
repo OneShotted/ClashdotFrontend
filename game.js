@@ -17,7 +17,7 @@ const chatLog = document.getElementById('chat-log');
 const chatInput = document.getElementById('chat-input');
 const sendChatBtn = document.getElementById('send-chat');
 
-// Handle username screen
+// Username screen
 startButton.onclick = () => {
   playerName = usernameInput.value.trim();
   if (playerName) {
@@ -27,11 +27,10 @@ startButton.onclick = () => {
   }
 };
 
-// WebSocket
+// WebSocket connection to your new server
 let socket;
-
 function initSocket() {
-  socket = new WebSocket('wss://websocket-1-xib5.onrender.com');
+  socket = new WebSocket('wss://websocket-vavu.onrender.com');
 
   socket.onopen = () => {
     socket.send(JSON.stringify({ type: 'register', name: playerName }));
@@ -70,7 +69,7 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Drawing with grid and green terrain
+// Drawing with green terrain and grid
 function drawGrid(ctx, camX, camY) {
   const gridSize = 50;
   ctx.strokeStyle = '#ccc';
