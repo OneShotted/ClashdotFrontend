@@ -1,7 +1,6 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-// Fullscreen canvas
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -9,7 +8,6 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// Game world and player
 const worldWidth = 2000;
 const worldHeight = 2000;
 
@@ -25,7 +23,11 @@ let allPlayers = {};
 let socket = null;
 let playerName = null;
 
-// Username setup
+// Chat elements
+const chatInput = document.getElementById('chatInput');
+const sendChatBtn = document.getElementById('sendChatBtn');
+const chatLog = document.getElementById('chatLog');
+
 document.getElementById('startBtn').onclick = () => {
   playerName = document.getElementById('usernameInput').value.trim();
   if (!playerName) return;
@@ -45,16 +47,27 @@ document.getElementById('startBtn').onclick = () => {
       allPlayers = data.players;
     } else if (data.type === 'update') {
       allPlayers = data.players;
+    } else if (data.type === 'chat') {
+      const chatEntry = document.createElement('div');
+      chatEntry.textContent = `${data.name}: ${data.message}`;
+      chatLog.appendChild(chatEntry);
+      chatLog.scrollTop = chatLog.scrollHeight;
     }
   };
 };
 
-// Controls
+sendChatBtn.onclick = () => {
+  const message = chatInput.value.trim();
+  if (message && socket && socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify({ type: 'chat', message }));
+    chatInput.value = '';
+  }
+};
+
 const keys = {};
 window.addEventListener('keydown', e => keys[e.key] = true);
 window.addEventListener('keyup', e => keys[e.key] = false);
 
-// Terrain
 function drawTerrain(camX, camY) {
   ctx.fillStyle = '#7cfc00';
   ctx.fillRect(-camX, -camY, worldWidth, worldHeight);
@@ -74,7 +87,6 @@ function drawTerrain(camX, camY) {
   }
 }
 
-// Game loop
 function update() {
   if (keys['w']) player.y -= player.speed;
   if (keys['s']) player.y += player.speed;
@@ -101,13 +113,11 @@ function draw() {
     const screenX = p.x - camX;
     const screenY = p.y - camY;
 
-    // Draw player circle
     ctx.beginPath();
     ctx.arc(screenX, screenY, 20, 0, Math.PI * 2);
     ctx.fillStyle = id === playerId ? 'blue' : 'red';
     ctx.fill();
 
-    // Draw player name
     ctx.fillStyle = 'white';
     ctx.font = '16px sans-serif';
     ctx.textAlign = 'center';
@@ -122,3 +132,4 @@ function gameLoop() {
 }
 
 gameLoop();
+
