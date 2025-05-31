@@ -60,3 +60,14 @@ body {
   padding: 4px;
   margin-left: 2%;
 }
+
+#dev-panel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 0, 0.8);
+  padding: 10px;
+  border-radius: 8px;
+  display: none;
+  z-index: 100;
+}
