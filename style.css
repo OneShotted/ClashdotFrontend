@@ -62,13 +62,24 @@ body {
 }
 
 #dev-panel {
-  display: none;
   position: fixed;
   top: 20px;
   right: 20px;
-  background: #eeeeee;
-  padding: 12px;
+  width: 300px;
+  background: #fff8e1;
+  padding: 10px;
+  border: 2px solid #f0c36d;
   border-radius: 10px;
-  width: 240px;
-  font-size: 14px;
+  display: none;
+  z-index: 20;
+}
+
+#dev-player-list {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+#dev-player-list div {
+  margin-bottom: 4px;
 }
