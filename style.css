@@ -84,29 +84,24 @@ body {
   margin-bottom: 4px;
 }
 
-#changelog {
+#changelog-panel {
   position: fixed;
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  width: 300px;
-  background: #e0f7fa;
+  background: #f3f3f3;
   padding: 10px;
-  border: 1px solid #00796b;
-  border-radius: 10px;
-  display: none;
+  border: 1px solid #ccc;
+  border-radius: 8px;
   z-index: 15;
 }
 
-#toggle-changelog {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 16;
-  padding: 5px 10px;
+#changelog-content {
+  display: none;
+  margin-top: 10px;
 }
 
-.chat-dev {
+.developer-message {
   color: red;
   font-weight: bold;
 }
