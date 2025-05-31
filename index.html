@@ -3,46 +3,71 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Clashdot.io!</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>My .io Game</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-color: #111;
+      color: white;
+    }
+
+    #changelog {
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      position: absolute;
+      top: 60px;
+      left: 20px;
+      width: 250px;
+      font-size: 14px;
+      z-index: 1000;
+      display: none;
+    }
+
+    #toggleChangelogBtn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 1001;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: #333;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    #toggleChangelogBtn:hover {
+      background: #444;
+    }
+  </style>
 </head>
 <body>
-  <div id="username-screen">
-    <h1>Enter Username</h1>
-    <input id="username-input" placeholder="Username..." />
-    <button id="start-button">Start Game</button>
-  </div>
+  <button id="toggleChangelogBtn">Show Changelog</button>
 
-  <canvas id="gameCanvas"></canvas>
-
-  <div id="chat-container">
-    <div id="chat-log"></div>
-    <input id="chat-input" placeholder="Type a message..." />
-    <button id="send-chat">Send</button>
-  </div>
-
-  <!-- Dev Panel -->
-  <div id="dev-panel">
-    <h2>Developer Panel</h2>
-    <div id="dev-player-list"></div>
-    <div>
-      <input id="broadcast-input" placeholder="Broadcast message..." />
-      <button id="broadcast-btn">Send</button>
-    </div>
-  </div>
-
-  <!-- Changelog -->
   <div id="changelog">
-    <h2>Changelog</h2>
+    <h3>Changelog</h3>
     <ul>
-      <li>Added developer panel (kick, teleport, broadcast)</li>
-      <li>Improved chat system with red dev messages</li>
-      <li>Player movement with Arrow Keys and WASD</li>
-      <li>Changelog display added</li>
+      <li>Added chat system</li>
+      <li>Improved developer tools</li>
+      <li>Broadcasts appear in red</li>
+      <li>Toggleable changelog implemented</li>
     </ul>
   </div>
 
-  <script src="game.js"></script>
+  <script>
+    const changelog = document.getElementById('changelog');
+    const toggleBtn = document.getElementById('toggleChangelogBtn');
+
+    toggleBtn.addEventListener('click', () => {
+      const isVisible = changelog.style.display === 'block';
+      changelog.style.display = isVisible ? 'none' : 'block';
+      toggleBtn.textContent = isVisible ? 'Show Changelog' : 'Hide Changelog';
+    });
+  </script>
 </body>
 </html>
 
