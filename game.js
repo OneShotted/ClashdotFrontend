@@ -26,7 +26,6 @@ startButton.onclick = () => {
   }
 };
 
-// WebSocket connection to your server
 let socket;
 function initSocket() {
   socket = new WebSocket('wss://websocket-vavu.onrender.com');
@@ -37,7 +36,6 @@ function initSocket() {
 
   socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
-
     if (data.type === 'id') {
       playerId = data.id;
     } else if (data.type === 'update') {
@@ -54,21 +52,34 @@ function initSocket() {
 // Chat
 sendChatBtn.onclick = () => {
   const message = chatInput.value.trim();
-  if (message && socket && socket.readyState === WebSocket.OPEN) {
+  if (message && socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify({ type: 'chat', message }));
     chatInput.value = '';
   }
 };
 
-// Movement
+// Movement (Arrow Keys and WASD)
 document.addEventListener('keydown', (e) => {
   if (!playerId || !socket) return;
-  if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-    socket.send(JSON.stringify({ type: 'move', key: e.key }));
+
+  const keyMap = {
+    'arrowup': 'up',
+    'arrowdown': 'down',
+    'arrowleft': 'left',
+    'arrowright': 'right',
+    'w': 'up',
+    's': 'down',
+    'a': 'left',
+    'd': 'right',
+  };
+
+  const direction = keyMap[e.key.toLowerCase()];
+  if (direction) {
+    socket.send(JSON.stringify({ type: 'move', key: direction }));
   }
 });
 
-// Draw grid
+// Grid
 function drawGrid(ctx, camX, camY) {
   const gridSize = 50;
   ctx.strokeStyle = '#ccc';
@@ -89,7 +100,7 @@ function drawGrid(ctx, camX, camY) {
   }
 }
 
-// Draw players and world
+// Drawing the world
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -102,14 +113,11 @@ function draw() {
   const camX = me.x - canvas.width / 2;
   const camY = me.y - canvas.height / 2;
 
-  // Background
-  ctx.fillStyle = '#b7e2b2'; // greenish terrain
+  ctx.fillStyle = '#b7e2b2';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Grid
   drawGrid(ctx, camX, camY);
 
-  // Draw players
   for (const id in allPlayers) {
     const p = allPlayers[id];
     const x = p.x - camX;
@@ -130,3 +138,4 @@ function draw() {
 }
 
 draw();
+
