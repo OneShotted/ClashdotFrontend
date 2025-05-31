@@ -57,14 +57,11 @@ function initSocket() {
     } else if (data.type === 'chat') {
       const msg = document.createElement('div');
 
-      if (data.name === '[DEVELOPER]') {
-        // Broadcast message: red and no name shown
+      if (data.isBroadcast) {
+        // This is an official dev broadcast
         msg.classList.add('red-message');
         msg.textContent = data.message;
       } else {
-        // Ignore fake [DEVELOPER] usernames
-        if (data.name === '[DEVELOPER]') return;
-
         msg.textContent = `${data.name}: ${data.message}`;
       }
 
@@ -176,6 +173,4 @@ function draw() {
   requestAnimationFrame(draw);
 }
 draw();
-
-
 
