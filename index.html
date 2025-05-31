@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Clashdot.io</title>
+  <title>Multiplayer .io Game</title>
   <style>
     html, body {
       margin: 0;
@@ -13,6 +13,35 @@
 
     canvas {
       display: block;
+      background: #1a1a1a; /* Restored dark background */
+    }
+
+    #username-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #111;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    #username-screen input {
+      padding: 10px;
+      font-size: 18px;
+      margin-top: 10px;
+    }
+
+    #username-screen button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      font-size: 18px;
+      cursor: pointer;
     }
 
     #chat-container {
@@ -26,6 +55,7 @@
       border-radius: 8px;
       font-family: sans-serif;
       box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      display: none;
     }
 
     #chat-log {
@@ -59,6 +89,12 @@
   </style>
 </head>
 <body>
+  <div id="username-screen">
+    <h1>Enter your username</h1>
+    <input id="username-input" type="text" placeholder="Your name" />
+    <button onclick="startGame()">Start</button>
+  </div>
+
   <canvas id="gameCanvas"></canvas>
 
   <div id="chat-container">
