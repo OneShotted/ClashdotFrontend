@@ -84,27 +84,25 @@ body {
   margin-bottom: 4px;
 }
 
-#changelog-panel {
+#changelog {
   position: fixed;
   top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #f3f3f3;
-  padding: 10px;
-  border: 1px solid #ccc;
+  left: 20px;
+  width: 300px;
+  background: #f0f0f0;
   border-radius: 8px;
+  padding: 10px;
   z-index: 15;
+  font-size: 14px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-#changelog-content {
-  display: none;
-  margin-top: 10px;
+#changelog h2 {
+  margin-top: 0;
 }
 
-.developer-message {
+.red-message {
   color: red;
   font-weight: bold;
 }
-
-
 
