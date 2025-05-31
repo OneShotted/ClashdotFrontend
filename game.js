@@ -7,6 +7,7 @@ let socket;
 let playerId = null;
 let allPlayers = {};
 let playerName = '';
+let isDev = false;
 
 const usernameScreen = document.getElementById('username-screen');
 const usernameInput = document.getElementById('username-input');
@@ -15,13 +16,23 @@ const chatContainer = document.getElementById('chat-container');
 const chatLog = document.getElementById('chat-log');
 const chatInput = document.getElementById('chat-input');
 const sendChatBtn = document.getElementById('send-chat');
+const devPanel = document.getElementById('dev-panel');
 
-// Username screen logic
 startButton.onclick = () => {
-  playerName = usernameInput.value.trim();
-  if (playerName) {
+  const input = usernameInput.value.trim();
+  if (input) {
+    if (input.includes('#')) {
+      const [name, key] = input.split('#');
+      if (key === '1627') {
+        isDev = true;
+      }
+      playerName = name;
+    } else {
+      playerName = input;
+    }
     usernameScreen.style.display = 'none';
     chatContainer.style.display = 'flex';
+    if (isDev) devPanel.style.display = 'block';
     initSocket();
   }
 };
@@ -30,7 +41,7 @@ function initSocket() {
   socket = new WebSocket('wss://websocket-vavu.onrender.com');
 
   socket.onopen = () => {
-    socket.send(JSON.stringify({ type: 'register', name: playerName }));
+    socket.send(JSON.stringify({ type: 'register', name: playerName, isDev }));
   };
 
   socket.onmessage = (event) => {
@@ -57,25 +68,22 @@ sendChatBtn.onclick = () => {
   }
 };
 
-// Movement
 document.addEventListener('keydown', (e) => {
   if (!playerId || !socket || socket.readyState !== WebSocket.OPEN) return;
-  if (document.activeElement === chatInput) return;
-
   const key = e.key.toLowerCase();
 
-  if (key === 'arrowup' || key === 'w') {
-    socket.send(JSON.stringify({ type: 'move', key: 'up' }));
-  } else if (key === 'arrowdown' || key === 's') {
-    socket.send(JSON.stringify({ type: 'move', key: 'down' }));
-  } else if (key === 'arrowleft' || key === 'a') {
-    socket.send(JSON.stringify({ type: 'move', key: 'left' }));
-  } else if (key === 'arrowright' || key === 'd') {
-    socket.send(JSON.stringify({ type: 'move', key: 'right' }));
+  const movement = {
+    'arrowup': 'up', 'w': 'up',
+    'arrowdown': 'down', 's': 'down',
+    'arrowleft': 'left', 'a': 'left',
+    'arrowright': 'right', 'd': 'right'
+  };
+
+  if (movement[key]) {
+    socket.send(JSON.stringify({ type: 'move', key: movement[key] }));
   }
 });
 
-// Draw grid background
 function drawGrid(camX, camY) {
   const gridSize = 50;
   ctx.strokeStyle = '#c3d6be';
@@ -95,7 +103,6 @@ function drawGrid(camX, camY) {
   }
 }
 
-// Main game loop
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -132,3 +139,25 @@ function draw() {
 }
 
 draw();
+
+// Dev Panel Functions
+function teleport() {
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify({ type: 'dev', action: 'teleport', x: Math.random() * 1000, y: Math.random() * 1000 }));
+  }
+}
+
+function kickPlayer() {
+  const name = document.getElementById('kick-name').value;
+  if (name) {
+    socket.send(JSON.stringify({ type: 'dev', action: 'kick', targetName: name }));
+  }
+}
+
+function broadcast() {
+  const message = document.getElementById('broadcast-msg').value;
+  if (message) {
+    socket.send(JSON.stringify({ type: 'dev', action: 'broadcast', message }));
+  }
+}
+
