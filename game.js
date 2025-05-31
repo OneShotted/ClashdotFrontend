@@ -55,6 +55,10 @@ function initSocket() {
       msg.textContent = `${data.name}: ${data.message}`;
       chatLog.appendChild(msg);
       chatLog.scrollTop = chatLog.scrollHeight;
+    } else if (data.type === 'kicked') {
+      alert("You were kicked by the developer.");
+      socket.close();
+      location.reload();
     }
   };
 }
