@@ -19,17 +19,9 @@ const sendChatBtn = document.getElementById('send-chat');
 const devPanel = document.getElementById('dev-panel');
 
 startButton.onclick = () => {
-  const input = usernameInput.value.trim();
-  if (input) {
-    if (input.includes('#')) {
-      const [name, key] = input.split('#');
-      if (key === '1627') {
-        isDev = true;
-      }
-      playerName = name;
-    } else {
-      playerName = input;
-    }
+  playerName = usernameInput.value.trim();
+  if (playerName) {
+    isDev = playerName.includes('#1627');
     usernameScreen.style.display = 'none';
     chatContainer.style.display = 'flex';
     if (isDev) devPanel.style.display = 'block';
@@ -41,7 +33,7 @@ function initSocket() {
   socket = new WebSocket('wss://websocket-vavu.onrender.com');
 
   socket.onopen = () => {
-    socket.send(JSON.stringify({ type: 'register', name: playerName, isDev }));
+    socket.send(JSON.stringify({ type: 'register', name: playerName }));
   };
 
   socket.onmessage = (event) => {
@@ -62,26 +54,20 @@ function initSocket() {
 
 sendChatBtn.onclick = () => {
   const message = chatInput.value.trim();
-  if (message && socket && socket.readyState === WebSocket.OPEN) {
+  if (message && socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify({ type: 'chat', message }));
     chatInput.value = '';
   }
 };
 
 document.addEventListener('keydown', (e) => {
-  if (!playerId || !socket || socket.readyState !== WebSocket.OPEN) return;
+  if (!playerId || socket.readyState !== WebSocket.OPEN) return;
+
   const key = e.key.toLowerCase();
-
-  const movement = {
-    'arrowup': 'up', 'w': 'up',
-    'arrowdown': 'down', 's': 'down',
-    'arrowleft': 'left', 'a': 'left',
-    'arrowright': 'right', 'd': 'right'
-  };
-
-  if (movement[key]) {
-    socket.send(JSON.stringify({ type: 'move', key: movement[key] }));
-  }
+  if (['arrowup', 'w'].includes(key)) socket.send(JSON.stringify({ type: 'move', key: 'up' }));
+  if (['arrowdown', 's'].includes(key)) socket.send(JSON.stringify({ type: 'move', key: 'down' }));
+  if (['arrowleft', 'a'].includes(key)) socket.send(JSON.stringify({ type: 'move', key: 'left' }));
+  if (['arrowright', 'd'].includes(key)) socket.send(JSON.stringify({ type: 'move', key: 'right' }));
 });
 
 function drawGrid(camX, camY) {
@@ -105,7 +91,6 @@ function drawGrid(camX, camY) {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
   if (!playerId || !allPlayers[playerId]) {
     requestAnimationFrame(draw);
     return;
@@ -140,24 +125,26 @@ function draw() {
 
 draw();
 
-// Dev Panel Functions
-function teleport() {
+// ----- DEV COMMANDS -----
+function sendDevCommand(command, payload = {}) {
   if (socket && socket.readyState === WebSocket.OPEN) {
-    socket.send(JSON.stringify({ type: 'dev', action: 'teleport', x: Math.random() * 1000, y: Math.random() * 1000 }));
+    socket.send(JSON.stringify({ type: 'devCommand', command, ...payload }));
   }
 }
 
-function kickPlayer() {
-  const name = document.getElementById('kick-name').value;
-  if (name) {
-    socket.send(JSON.stringify({ type: 'dev', action: 'kick', targetName: name }));
-  }
-}
+document.getElementById('kick-player-btn').onclick = () => {
+  const id = document.getElementById('kick-id').value.trim();
+  if (id) sendDevCommand('kick', { targetId: id });
+};
 
-function broadcast() {
-  const message = document.getElementById('broadcast-msg').value;
-  if (message) {
-    socket.send(JSON.stringify({ type: 'dev', action: 'broadcast', message }));
-  }
-}
+document.getElementById('teleport-player-btn').onclick = () => {
+  const id = document.getElementById('teleport-id').value.trim();
+  const x = parseInt(document.getElementById('teleport-x').value.trim()) || 300;
+  const y = parseInt(document.getElementById('teleport-y').value.trim()) || 300;
+  if (id) sendDevCommand('teleport', { targetId: id, x, y });
+};
 
+document.getElementById('broadcast-btn').onclick = () => {
+  const msg = document.getElementById('broadcast-msg').value.trim();
+  if (msg) sendDevCommand('broadcast', { message: msg });
+};
