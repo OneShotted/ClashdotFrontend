@@ -4,7 +4,6 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-let player = { x: 1000, y: 1000, radius: 20 };
 let playerId = null;
 let allPlayers = {};
 let playerName = '';
@@ -27,7 +26,7 @@ startButton.onclick = () => {
   }
 };
 
-// WebSocket connection to your new server
+// WebSocket connection to your server
 let socket;
 function initSocket() {
   socket = new WebSocket('wss://websocket-vavu.onrender.com');
@@ -69,7 +68,7 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Drawing with green terrain and grid
+// Draw grid
 function drawGrid(ctx, camX, camY) {
   const gridSize = 50;
   ctx.strokeStyle = '#ccc';
@@ -90,20 +89,27 @@ function drawGrid(ctx, camX, camY) {
   }
 }
 
+// Draw players and world
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const camX = player.x - canvas.width / 2;
-  const camY = player.y - canvas.height / 2;
+  if (!playerId || !allPlayers[playerId]) {
+    requestAnimationFrame(draw);
+    return;
+  }
 
-  // Green background
-  ctx.fillStyle = '#b7e2b2';
+  const me = allPlayers[playerId];
+  const camX = me.x - canvas.width / 2;
+  const camY = me.y - canvas.height / 2;
+
+  // Background
+  ctx.fillStyle = '#b7e2b2'; // greenish terrain
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // Grid
   drawGrid(ctx, camX, camY);
 
-  // Draw all players
+  // Draw players
   for (const id in allPlayers) {
     const p = allPlayers[id];
     const x = p.x - camX;
