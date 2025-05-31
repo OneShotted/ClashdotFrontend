@@ -1,0 +1,69 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: sans-serif;
+}
+
+#username-screen {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  background: #222;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+#username-input {
+  padding: 10px;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+#start-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#gameCanvas {
+  display: block;
+}
+
+#chat-container {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  width: 300px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  border-radius: 5px;
+  display: none;
+  z-index: 5;
+}
+
+#chat-log {
+  height: 150px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  margin-bottom: 5px;
+  padding: 5px;
+  font-size: 14px;
+  background: white;
+}
+
+#chat-input {
+  width: calc(100% - 60px);
+  padding: 5px;
+  font-size: 14px;
+}
+
+#send-chat {
+  width: 50px;
+  padding: 5px;
+  font-size: 14px;
+}
+
