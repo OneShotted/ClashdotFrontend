@@ -3,48 +3,68 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Multiplayer IO Game</title>
+  <title>Clashdot.io</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       overflow: hidden;
-      background: black;
     }
+
     canvas {
       display: block;
+    }
+
+    #chat-container {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      width: 250px;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      font-family: sans-serif;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    }
+
+    #chat-log {
+      max-height: 150px;
+      overflow-y: auto;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    #chat-input {
+      width: 70%;
+      padding: 4px;
+      border: none;
+      border-radius: 4px;
+    }
+
+    #send-chat {
+      width: 25%;
+      padding: 4px;
+      margin-left: 5%;
+      border: none;
+      border-radius: 4px;
+      background: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+
+    #send-chat:hover {
+      background: #45a049;
     }
   </style>
 </head>
 <body>
-  <!-- Username overlay -->
-  <div id="usernameOverlay" style="
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 10;
-  ">
-    <input id="usernameInput" placeholder="Enter your name" style="font-size: 24px; padding: 10px;" />
-    <button id="startBtn" style="font-size: 24px; margin-left: 10px;">Start</button>
-  </div>
-
-  <!-- Game canvas -->
   <canvas id="gameCanvas"></canvas>
 
-  <!-- Chat UI -->
-  <div id="chatContainer" style="
-    position: absolute; bottom: 0; left: 0; width: 100%;
-    padding: 10px; background: rgba(0,0,0,0.5); display: flex;
-    align-items: center; gap: 10px; z-index: 5;
-  ">
-    <input id="chatInput" type="text" placeholder="Type a message..." style="flex: 1; padding: 10px; font-size: 16px;" />
-    <button id="sendChatBtn" style="padding: 10px 20px;">Send</button>
-  </div>
-
-  <!-- Chat messages -->
-  <div id="chatLog" style="
-    position: absolute; bottom: 60px; left: 10px; width: 300px;
-    max-height: 300px; overflow-y: auto; background: rgba(0,0,0,0.6);
-    color: white; font-size: 14px; padding: 10px; z-index: 5;
-  ">
+  <div id="chat-container">
+    <div id="chat-log"></div>
+    <input id="chat-input" type="text" placeholder="Type a message..." />
+    <button id="send-chat">Send</button>
   </div>
 
   <script src="game.js"></script>
