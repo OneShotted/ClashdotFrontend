@@ -23,11 +23,15 @@ const broadcastInput = document.getElementById('broadcast-input');
 const broadcastBtn = document.getElementById('broadcast-btn');
 
 startButton.onclick = () => {
-  playerName = usernameInput.value.trim();
-  if (playerName) {
-    if (playerName.includes('#1627')) {
+  const rawName = usernameInput.value.trim();
+  if (rawName) {
+    if (rawName.includes('#1627')) {
       isDev = true;
+      playerName = rawName.replace('#1627', '');
+    } else {
+      playerName = rawName;
     }
+
     usernameScreen.style.display = 'none';
     chatContainer.style.display = 'flex';
     if (isDev) devPanel.style.display = 'block';
@@ -39,7 +43,7 @@ function initSocket() {
   socket = new WebSocket('wss://websocket-vavu.onrender.com');
 
   socket.onopen = () => {
-    socket.send(JSON.stringify({ type: 'register', name: playerName }));
+    socket.send(JSON.stringify({ type: 'register', name: playerName + (isDev ? '#1627' : '') }));
   };
 
   socket.onmessage = (event) => {
@@ -52,14 +56,11 @@ function initSocket() {
       if (isDev) updateDevPanel();
     } else if (data.type === 'chat') {
       const msg = document.createElement('div');
+
+      const isDevSender = data.name === 'CharmedZ' || data.name === '[DEVELOPER]';
+      if (isDevSender) msg.classList.add('red-message');
+
       msg.textContent = `${data.name}: ${data.message}`;
-
-      // RED for dev or broadcast
-      if (data.name === 'CharmedZ#1627' || data.isBroadcast) {
-        msg.style.color = 'red';
-        msg.style.fontWeight = 'bold';
-      }
-
       chatLog.appendChild(msg);
       chatLog.scrollTop = chatLog.scrollHeight;
     }
@@ -103,15 +104,6 @@ broadcastBtn.onclick = () => {
   const msg = broadcastInput.value.trim();
   if (msg) {
     socket.send(JSON.stringify({ type: 'devCommand', command: 'broadcast', message: msg }));
-
-    // Show locally as red
-    const broadcastMsg = document.createElement('div');
-    broadcastMsg.textContent = `Broadcast: ${msg}`;
-    broadcastMsg.style.color = 'red';
-    broadcastMsg.style.fontWeight = 'bold';
-    chatLog.appendChild(broadcastMsg);
-    chatLog.scrollTop = chatLog.scrollHeight;
-
     broadcastInput.value = '';
   }
 };
