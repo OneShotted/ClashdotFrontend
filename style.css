@@ -18,9 +18,9 @@ body {
   z-index: 10;
 }
 
-#title {
+#game-title {
   font-size: 48px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 #username-input {
@@ -89,20 +89,15 @@ body {
   margin-bottom: 4px;
 }
 
-#changelog-container {
+#changelog {
   position: fixed;
   top: 20px;
   left: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  z-index: 15;
-}
-
-#changelog {
+  width: 300px;
   background: #f0f0f0;
   border-radius: 8px;
   padding: 10px;
+  z-index: 15;
   font-size: 14px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
@@ -111,12 +106,23 @@ body {
   margin-top: 0;
 }
 
-#discord-button img {
-  width: 32px;
-  height: 32px;
-}
 .red-message {
   color: red;
   font-weight: bold;
 }
+
+#discord-button {
+  position: fixed;
+  top: 20px;
+  left: 330px;
+  width: 40px;
+  height: 40px;
+  z-index: 16;
+}
+
+#discord-button img {
+  width: 100%;
+  height: 100%;
+}
+
 
