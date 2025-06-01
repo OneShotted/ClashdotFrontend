@@ -5,6 +5,87 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Clashdot.io!</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Add these styles to ensure layout is clean */
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    canvas#gameCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    #username-screen {
+      position: absolute;
+      top: 30%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      padding: 20px;
+      text-align: center;
+      z-index: 2;
+    }
+
+    #chat-container {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      width: 300px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 10px;
+      font-family: sans-serif;
+      font-size: 14px;
+      z-index: 1;
+    }
+
+    #chat-log {
+      max-height: 150px;
+      overflow-y: auto;
+      margin-bottom: 5px;
+    }
+
+    #dev-panel {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255,255,255,0.9);
+      padding: 10px;
+      border-radius: 5px;
+      z-index: 1;
+    }
+
+    #changelog {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(255,255,255,0.9);
+      padding: 10px;
+      border-radius: 5px;
+      z-index: 1;
+    }
+
+    #discord-button {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 1;
+    }
+
+    #chat-input {
+      width: 75%;
+    }
+
+    #send-chat {
+      width: 20%;
+    }
+  </style>
 </head>
 <body>
   <div id="username-screen">
@@ -37,6 +118,7 @@
       <li>Improved chat system with red dev messages</li>
       <li>Player movement with Arrow Keys and WASD</li>
       <li>Changelog display added</li>
+      <li>Health bars and enemy mobs</li>
     </ul>
   </div>
 
