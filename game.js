@@ -56,14 +56,12 @@ function initSocket() {
       if (isDev) updateDevPanel();
     } else if (data.type === 'chat') {
       const msg = document.createElement('div');
-
       if (data.isBroadcast) {
         msg.classList.add('red-message');
         msg.textContent = data.message;
       } else {
         msg.textContent = `${data.name}: ${data.message}`;
       }
-
       chatLog.appendChild(msg);
       chatLog.scrollTop = chatLog.scrollHeight;
     }
@@ -111,15 +109,35 @@ broadcastBtn.onclick = () => {
   }
 };
 
-document.addEventListener('keydown', (e) => {
-  if (!playerId || !socket || socket.readyState !== WebSocket.OPEN) return;
+// Key state tracking
+const keys = { up: false, down: false, left: false, right: false };
 
+document.addEventListener('keydown', (e) => {
   const key = e.key.toLowerCase();
-  if (key === 'arrowup' || key === 'w') socket.send(JSON.stringify({ type: 'move', key: 'up' }));
-  if (key === 'arrowdown' || key === 's') socket.send(JSON.stringify({ type: 'move', key: 'down' }));
-  if (key === 'arrowleft' || key === 'a') socket.send(JSON.stringify({ type: 'move', key: 'left' }));
-  if (key === 'arrowright' || key === 'd') socket.send(JSON.stringify({ type: 'move', key: 'right' }));
+  if (key === 'arrowup' || key === 'w') keys.up = true;
+  if (key === 'arrowdown' || key === 's') keys.down = true;
+  if (key === 'arrowleft' || key === 'a') keys.left = true;
+  if (key === 'arrowright' || key === 'd') keys.right = true;
 });
+
+document.addEventListener('keyup', (e) => {
+  const key = e.key.toLowerCase();
+  if (key === 'arrowup' || key === 'w') keys.up = false;
+  if (key === 'arrowdown' || key === 's') keys.down = false;
+  if (key === 'arrowleft' || key === 'a') keys.left = false;
+  if (key === 'arrowright' || key === 'd') keys.right = false;
+});
+
+function gameLoop() {
+  if (playerId && socket && socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify({
+      type: 'movementState',
+      keys
+    }));
+  }
+  requestAnimationFrame(gameLoop);
+}
+gameLoop();
 
 function drawGrid(camX, camY) {
   const gridSize = 50;
@@ -158,16 +176,15 @@ function draw() {
     const x = p.x - camX;
     const y = p.y - camY;
 
+    ctx.beginPath();
     if (p.isDev) {
-      ctx.fillStyle = 'red';
-      ctx.beginPath();
       ctx.moveTo(x, y - 20);
       ctx.lineTo(x - 20, y + 20);
       ctx.lineTo(x + 20, y + 20);
       ctx.closePath();
+      ctx.fillStyle = 'blue';
       ctx.fill();
     } else {
-      ctx.beginPath();
       ctx.arc(x, y, 20, 0, Math.PI * 2);
       ctx.fillStyle = id === playerId ? 'blue' : 'red';
       ctx.fill();
@@ -182,3 +199,4 @@ function draw() {
   requestAnimationFrame(draw);
 }
 draw();
+
