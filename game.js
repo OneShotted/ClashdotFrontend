@@ -6,6 +6,7 @@ canvas.height = window.innerHeight;
 let socket;
 let playerId = null;
 let allPlayers = {};
+let allBots = {}; // NEW: store bots
 let playerName = '';
 let isDev = false;
 
@@ -53,6 +54,7 @@ function initSocket() {
       playerId = data.id;
     } else if (data.type === 'update') {
       allPlayers = data.players;
+      allBots = data.bots || {}; // NEW: capture bot data
       if (isDev) updateDevPanel();
     } else if (data.type === 'chat') {
       const msg = document.createElement('div');
@@ -171,6 +173,7 @@ function draw() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   drawGrid(camX, camY);
 
+  // Draw players
   for (const id in allPlayers) {
     const p = allPlayers[id];
     const x = p.x - camX;
@@ -194,6 +197,16 @@ function draw() {
     ctx.font = '14px sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText(p.name, x, y - 30);
+  }
+
+  // Draw bots
+  for (const id in allBots) {
+    const bot = allBots[id];
+    const x = bot.x - camX;
+    const y = bot.y - camY;
+
+    ctx.fillStyle = 'gray';
+    ctx.fillRect(x - 10, y - 10, 20, 20); // 20x20 square
   }
 
   requestAnimationFrame(draw);
