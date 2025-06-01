@@ -105,6 +105,32 @@ body {
   color: red;
   font-weight: bold;
 }
+  #discord-button {
+  position: fixed;
+  top: 20px;
+  left: 330px; /* Positioned next to #changelog */
+  width: 40px;
+  height: 40px;
+  z-index: 16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #7289da;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+  padding: 5px;
+  transition: transform 0.2s;
+}
+
+#discord-button:hover {
+  transform: scale(1.1);
+}
+
+#discord-button img {
+  width: 24px;
+  height: 24px;
+}
+
 
 
 
