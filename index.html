@@ -31,7 +31,7 @@
   </div>
 
   <!-- Changelog Toggle Button -->
-  <button id="changelog-toggle">Show Changelog</button>
+  <button id="changelog-toggle">Changelog</button>
 
   <!-- Changelog (Hidden by Default) -->
   <div id="changelog" style="display: none;">
@@ -55,7 +55,7 @@
       const toggleBtn = document.getElementById('changelog-toggle');
       const isVisible = log.style.display === 'block';
       log.style.display = isVisible ? 'none' : 'block';
-      toggleBtn.textContent = isVisible ? 'Show Changelog' : 'Hide Changelog';
+      toggleBtn.textContent = isVisible ? 'Changelog' : 'Hide Changelog';
     });
   </script>
 
