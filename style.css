@@ -108,7 +108,7 @@ body {
   #discord-button {
   position: fixed;
   top: 20px;
-  left: 320px; /* Positioned next to #changelog */
+  left: 340px; /* Positioned next to #changelog */
   width: 40px;
   height: 40px;
   z-index: 16;
