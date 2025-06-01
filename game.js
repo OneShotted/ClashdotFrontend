@@ -58,7 +58,6 @@ function initSocket() {
       const msg = document.createElement('div');
 
       if (data.isBroadcast) {
-        // This is an official dev broadcast
         msg.classList.add('red-message');
         msg.textContent = data.message;
       } else {
@@ -159,10 +158,20 @@ function draw() {
     const x = p.x - camX;
     const y = p.y - camY;
 
-    ctx.beginPath();
-    ctx.arc(x, y, 20, 0, Math.PI * 2);
-    ctx.fillStyle = id === playerId ? 'blue' : 'red';
-    ctx.fill();
+    if (p.isDev) {
+      ctx.fillStyle = 'red';
+      ctx.beginPath();
+      ctx.moveTo(x, y - 20);
+      ctx.lineTo(x - 20, y + 20);
+      ctx.lineTo(x + 20, y + 20);
+      ctx.closePath();
+      ctx.fill();
+    } else {
+      ctx.beginPath();
+      ctx.arc(x, y, 20, 0, Math.PI * 2);
+      ctx.fillStyle = id === playerId ? 'blue' : 'red';
+      ctx.fill();
+    }
 
     ctx.fillStyle = 'black';
     ctx.font = '14px sans-serif';
@@ -173,4 +182,3 @@ function draw() {
   requestAnimationFrame(draw);
 }
 draw();
-
