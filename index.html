@@ -8,8 +8,7 @@
 </head>
 <body>
   <div id="username-screen">
-    <h1 id="title">Clashdot.io</h1>
-    <h2>Enter Username</h2>
+    <h1 id="game-title">Clashdot.io</h1>
     <input id="username-input" placeholder="Username..." />
     <button id="start-button">Start Game</button>
   </div>
@@ -22,7 +21,6 @@
     <button id="send-chat">Send</button>
   </div>
 
-  <!-- Dev Panel -->
   <div id="dev-panel">
     <h2>Developer Panel</h2>
     <div id="dev-player-list"></div>
@@ -32,22 +30,19 @@
     </div>
   </div>
 
-  <!-- Changelog -->
-  <div id="changelog-container">
-    <div id="changelog">
-      <h2>Changelog</h2>
-      <ul>
-        <li>Added developer panel (kick, teleport, broadcast)</li>
-        <li>Improved chat system with red dev messages</li>
-        <li>Player movement with Arrow Keys and WASD</li>
-        <li>Changelog display added</li>
-        <li>Developer player now appears as a triangle</li>
-      </ul>
-    </div>
-    <a href="https://discord.gg/mCbW7cUd9c" target="_blank" id="discord-button" title="Join our Discord">
-      <img src="https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/discord.svg" alt="Discord" />
-    </a>
+  <div id="changelog">
+    <h2>Changelog</h2>
+    <ul>
+      <li>Added developer panel (kick, teleport, broadcast)</li>
+      <li>Improved chat system with red dev messages</li>
+      <li>Player movement with Arrow Keys and WASD</li>
+      <li>Changelog display added</li>
+    </ul>
   </div>
+
+  <a id="discord-button" href="https://discord.gg/mCbW7cUd9c" target="_blank">
+    <img src="https://img.icons8.com/ios-filled/50/000000/discord-logo.png" alt="Discord" />
+  </a>
 
   <script src="game.js"></script>
 </body>
