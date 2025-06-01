@@ -1,146 +1,201 @@
-const socket = new WebSocket("wss://your-render-server-url"); // Replace with actual Render WebSocket URL
-
-let playerId = null;
-let players = {};
-let mobs = [];
-
-let keys = {};
-let username = '';
-let chatInput = document.getElementById('chatInput');
-let chatBox = document.getElementById('chatBox');
-
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-let showUsernamePrompt = true;
+let socket;
+let playerId = null;
+let allPlayers = {};
+let playerName = '';
+let isDev = false;
 
-document.getElementById('usernameButton').onclick = () => {
-  const input = document.getElementById('usernameInput');
-  if (input.value.trim() !== '') {
-    username = input.value.trim();
-    socket.send(JSON.stringify({ type: 'username', username }));
-    showUsernamePrompt = false;
-    document.getElementById('usernameScreen').style.display = 'none';
-  }
-};
+const usernameScreen = document.getElementById('username-screen');
+const usernameInput = document.getElementById('username-input');
+const startButton = document.getElementById('start-button');
+const chatContainer = document.getElementById('chat-container');
+const chatLog = document.getElementById('chat-log');
+const chatInput = document.getElementById('chat-input');
+const sendChatBtn = document.getElementById('send-chat');
 
-socket.onmessage = (event) => {
-  const data = JSON.parse(event.data);
-  if (data.type === 'init') {
-    playerId = data.id;
-  }
+const devPanel = document.getElementById('dev-panel');
+const devPlayerList = document.getElementById('dev-player-list');
+const broadcastInput = document.getElementById('broadcast-input');
+const broadcastBtn = document.getElementById('broadcast-btn');
 
-  if (data.type === 'state') {
-    players = data.players;
-    mobs = data.mobs;
-  }
-
-  if (data.type === 'chat') {
-    const msg = document.createElement('div');
-    msg.innerHTML = `<strong>${data.username}:</strong> ${data.message}`;
-    if (data.username === "CharmedZ" && data.id === playerId) {
-      msg.style.color = 'red';
+startButton.onclick = () => {
+  const rawName = usernameInput.value.trim();
+  if (rawName) {
+    if (rawName.includes('#1627')) {
+      isDev = true;
+      playerName = rawName.replace('#1627', '');
+    } else {
+      playerName = rawName;
     }
-    chatBox.appendChild(msg);
-    chatBox.scrollTop = chatBox.scrollHeight;
+
+    usernameScreen.style.display = 'none';
+    chatContainer.style.display = 'flex';
+    if (isDev) devPanel.style.display = 'block';
+    initSocket();
   }
 };
+
+function initSocket() {
+  socket = new WebSocket('wss://websocket-vavu.onrender.com');
+
+  socket.onopen = () => {
+    socket.send(JSON.stringify({ type: 'register', name: playerName + (isDev ? '#1627' : '') }));
+  };
+
+  socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+
+    if (data.type === 'id') {
+      playerId = data.id;
+    } else if (data.type === 'update') {
+      allPlayers = data.players;
+      if (isDev) updateDevPanel();
+    } else if (data.type === 'chat') {
+      const msg = document.createElement('div');
+      if (data.isBroadcast) {
+        msg.classList.add('red-message');
+        msg.textContent = data.message;
+      } else {
+        msg.textContent = ${data.name}: ${data.message};
+      }
+      chatLog.appendChild(msg);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+  };
+}
+
+sendChatBtn.onclick = () => {
+  const message = chatInput.value.trim();
+  if (message && socket && socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify({ type: 'chat', message }));
+    chatInput.value = '';
+  }
+};
+
+function updateDevPanel() {
+  devPlayerList.innerHTML = '';
+  for (const id in allPlayers) {
+    const p = allPlayers[id];
+    const div = document.createElement('div');
+    div.textContent = ${p.name} (${id});
+
+    const kickBtn = document.createElement('button');
+    kickBtn.textContent = 'Kick';
+    kickBtn.onclick = () => {
+      socket.send(JSON.stringify({ type: 'devCommand', command: 'kick', targetId: id }));
+    };
+
+    const tpBtn = document.createElement('button');
+    tpBtn.textContent = 'TP';
+    tpBtn.onclick = () => {
+      socket.send(JSON.stringify({ type: 'devCommand', command: 'teleport', targetId: id, x: 100, y: 100 }));
+    };
+
+    div.appendChild(kickBtn);
+    div.appendChild(tpBtn);
+    devPlayerList.appendChild(div);
+  }
+}
+
+broadcastBtn.onclick = () => {
+  const msg = broadcastInput.value.trim();
+  if (msg) {
+    socket.send(JSON.stringify({ type: 'devCommand', command: 'broadcast', message: msg }));
+    broadcastInput.value = '';
+  }
+};
+
+// Key state tracking
+const keys = { up: false, down: false, left: false, right: false };
 
 document.addEventListener('keydown', (e) => {
-  keys[e.key.toLowerCase()] = true;
-  if (e.key === 'Enter' && document.activeElement !== chatInput) {
-    chatInput.focus();
-  }
+  const key = e.key.toLowerCase();
+  if (key === 'arrowup' || key === 'w') keys.up = true;
+  if (key === 'arrowdown' || key === 's') keys.down = true;
+  if (key === 'arrowleft' || key === 'a') keys.left = true;
+  if (key === 'arrowright' || key === 'd') keys.right = true;
 });
 
 document.addEventListener('keyup', (e) => {
-  keys[e.key.toLowerCase()] = false;
+  const key = e.key.toLowerCase();
+  if (key === 'arrowup' || key === 'w') keys.up = false;
+  if (key === 'arrowdown' || key === 's') keys.down = false;
+  if (key === 'arrowleft' || key === 'a') keys.left = false;
+  if (key === 'arrowright' || key === 'd') keys.right = false;
 });
 
-chatInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && chatInput.value.trim() !== '') {
-    socket.send(JSON.stringify({ type: 'chat', message: chatInput.value }));
-    chatInput.value = '';
+function gameLoop() {
+  if (playerId && socket && socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify({
+      type: 'movementState',
+      keys
+    }));
   }
-});
+  requestAnimationFrame(gameLoop);
+}
+gameLoop();
 
-// Send movement keys every 100ms
-setInterval(() => {
-  if (playerId && !showUsernamePrompt) {
-    const pressed = [];
-    if (keys['arrowup'] || keys['w']) pressed.push('up');
-    if (keys['arrowdown'] || keys['s']) pressed.push('down');
-    if (keys['arrowleft'] || keys['a']) pressed.push('left');
-    if (keys['arrowright'] || keys['d']) pressed.push('right');
-    socket.send(JSON.stringify({ type: 'move', keys: pressed }));
-  }
-}, 100);
-
-// Game rendering loop
-function render() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  const me = players[playerId];
-  if (!me) return requestAnimationFrame(render);
-
-  const offsetX = canvas.width / 2 - me.x;
-  const offsetY = canvas.height / 2 - me.y;
-
-  // Draw mobs
-  for (const mob of mobs) {
-    const x = mob.x + offsetX;
-    const y = mob.y + offsetY;
-
-    if (mob.type === 'wanderer') {
-      ctx.fillStyle = 'yellow';
-      ctx.beginPath();
-      ctx.arc(x, y, 15, 0, 2 * Math.PI);
-      ctx.fill();
-    } else if (mob.type === 'chaser') {
-      ctx.fillStyle = 'orange';
-      ctx.beginPath();
-      ctx.moveTo(x, y - 15);
-      ctx.lineTo(x - 12, y + 12);
-      ctx.lineTo(x + 12, y + 12);
-      ctx.closePath();
-      ctx.fill();
-    }
-  }
-
-  // Draw players
-  for (const id in players) {
-    const p = players[id];
-    const x = p.x + offsetX;
-    const y = p.y + offsetY;
-
-    // Body
-    ctx.fillStyle = p.color || 'blue';
+function drawGrid(camX, camY) {
+  const gridSize = 50;
+  ctx.strokeStyle = '#c3d6be';
+  for (let x = -camX % gridSize; x < canvas.width; x += gridSize) {
     ctx.beginPath();
-    ctx.arc(x, y, 20, 0, 2 * Math.PI);
-    ctx.fill();
-
-    // Username
-    ctx.fillStyle = 'black';
-    ctx.font = '12px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText(p.username, x, y - 30);
-
-    // Health bar
-    const barWidth = 40;
-    const barHeight = 6;
-    const healthPercent = p.health / 100;
-    ctx.fillStyle = 'gray';
-    ctx.fillRect(x - barWidth / 2, y - 25, barWidth, barHeight);
-    ctx.fillStyle = 'green';
-    ctx.fillRect(x - barWidth / 2, y - 25, barWidth * healthPercent, barHeight);
-    ctx.strokeStyle = 'black';
-    ctx.strokeRect(x - barWidth / 2, y - 25, barWidth, barHeight);
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, canvas.height);
+    ctx.stroke();
   }
-
-  requestAnimationFrame(render);
+  for (let y = -camY % gridSize; y < canvas.height; y += gridSize) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(canvas.width, y);
+    ctx.stroke();
+  }
 }
 
-render();
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (!playerId || !allPlayers[playerId]) {
+    requestAnimationFrame(draw);
+    return;
+  }
 
+  const me = allPlayers[playerId];
+  const camX = me.x - canvas.width / 2;
+  const camY = me.y - canvas.height / 2;
+
+  ctx.fillStyle = '#b7e2b2';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  drawGrid(camX, camY);
+
+  for (const id in allPlayers) {
+    const p = allPlayers[id];
+    const x = p.x - camX;
+    const y = p.y - camY;
+
+    ctx.beginPath();
+    if (p.isDev) {
+      ctx.moveTo(x, y - 20);
+      ctx.lineTo(x - 20, y + 20);
+      ctx.lineTo(x + 20, y + 20);
+      ctx.closePath();
+      ctx.fillStyle = 'blue';
+      ctx.fill();
+    } else {
+      ctx.arc(x, y, 20, 0, Math.PI * 2);
+      ctx.fillStyle = id === playerId ? 'blue' : 'red';
+      ctx.fill();
+    }
+
+    ctx.fillStyle = 'black';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(p.name, x, y - 30);
+  }
+
+  requestAnimationFrame(draw);
+}
+draw();
