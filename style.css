@@ -18,6 +18,18 @@ body {
   z-index: 10;
 }
 
+#title {
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+#username-screen h2 {
+  margin-top: 0;
+}
+
 #username-input {
   padding: 10px;
   font-size: 16px;
@@ -97,40 +109,24 @@ body {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+#changelog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 #changelog h2 {
-  margin-top: 0;
+  margin: 0;
+}
+
+#discord-button img {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
 }
 
 .red-message {
   color: red;
   font-weight: bold;
 }
-  #discord-button {
-  position: fixed;
-  top: 20px;
-  left: 340px; /* Positioned next to #changelog */
-  width: 40px;
-  height: 40px;
-  z-index: 16;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #7289da;
-  border-radius: 8px;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
-  padding: 5px;
-  transition: transform 0.2s;
-}
-
-#discord-button:hover {
-  transform: scale(1.1);
-}
-
-#discord-button img {
-  width: 24px;
-  height: 24px;
-}
-
-
-
 
