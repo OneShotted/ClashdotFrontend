@@ -1,0 +1,3 @@
+Here you can see the code that we have up on Clashdot.netlify.app. Edit code in the test repository, and if it works we can put it in this one! 
+Note 1: This is the frontend repository. The backend is in the backend repository "ClashdotBackend" - Server.js and Package.json
+Note 2: To get dev powers in clashdot, put your name and then #1627 at the end. Example: Imix#1627. This accesses the dev panel, and make you a triangle + 15 speed (6 is normal speed). Dont worry, the #1627 wont appear in game
