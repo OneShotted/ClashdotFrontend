@@ -133,6 +133,7 @@ document.addEventListener('keyup', (e) => {
 });
 
 document.addEventListener('keypress', (e) => {
+  console.log(e.key)
   if (e.key === 'Enter') {
     if (document.hasFocus(chatInput)) {
       sendMsg()
