@@ -69,12 +69,16 @@ function initSocket() {
 }
 
 sendChatBtn.onclick = () => {
+  sendMsg()
+};
+
+function sendMsg() {
   const message = chatInput.value.trim();
   if (message && socket && socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify({ type: 'chat', message }));
     chatInput.value = '';
   }
-};
+}
 
 function updateDevPanel() {
   devPlayerList.innerHTML = '';
@@ -126,6 +130,17 @@ document.addEventListener('keyup', (e) => {
   if (key === 'arrowdown' || key === 's') keys.down = false;
   if (key === 'arrowleft' || key === 'a') keys.left = false;
   if (key === 'arrowright' || key === 'd') keys.right = false;
+});
+
+document.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    if (document.hasFocus(chatInput)) {
+      sendMsg()
+      chatInput.blur()
+    } else {
+      chatInput.focus()
+    }
+  }
 });
 
 function gameLoop() {
