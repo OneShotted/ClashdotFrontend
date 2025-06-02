@@ -133,9 +133,7 @@ document.addEventListener('keyup', (e) => {
 });
 
 document.addEventListener('keypress', (e) => {
-  
   if (e.key === 'Enter') {
-    console.log('sss')
     if (document.hasFocus(chatInput)) {
       sendMsg()
       chatInput.blur()
