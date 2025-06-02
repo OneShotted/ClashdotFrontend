@@ -134,14 +134,15 @@ document.addEventListener('keyup', (e) => {
 
 document.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
-    if (document.hasFocus(chatInput)) {
-      sendMsg()
-      chatInput.blur()
+    if (document.activeElement === chatInput) {
+      sendMsg();
+      chatInput.blur();
     } else {
-      chatInput.focus()
+      chatInput.focus();
     }
   }
 });
+
 
 function gameLoop() {
   if (playerId && socket && socket.readyState === WebSocket.OPEN) {
