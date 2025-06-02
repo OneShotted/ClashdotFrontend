@@ -161,7 +161,7 @@ gameLoop();
 
 function drawGrid(camX, camY) {
   const gridSize = 50;
-  ctx.strokeStyle = '#c3d6be';
+  ctx.strokeStyle = 'black';
   for (let x = -camX % gridSize; x < canvas.width; x += gridSize) {
     ctx.beginPath();
     ctx.moveTo(x, 0);
