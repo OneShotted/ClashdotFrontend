@@ -117,6 +117,8 @@ broadcastBtn.onclick = () => {
 const keys = { up: false, down: false, left: false, right: false };
 
 document.addEventListener('keydown', (e) => {
+  if (document.activeElement === chatInput) return;
+  
   const key = e.key.toLowerCase();
   if (key === 'arrowup' || key === 'w') keys.up = true;
   if (key === 'arrowdown' || key === 's') keys.down = true;
@@ -125,6 +127,8 @@ document.addEventListener('keydown', (e) => {
 });
 
 document.addEventListener('keyup', (e) => {
+  if (document.activeElement === chatInput) return;
+  
   const key = e.key.toLowerCase();
   if (key === 'arrowup' || key === 'w') keys.up = false;
   if (key === 'arrowdown' || key === 's') keys.down = false;
@@ -188,6 +192,7 @@ function draw() {
 
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#31bd70';
   drawGrid(camX, camY);
 
   for (const id in allPlayers) {
