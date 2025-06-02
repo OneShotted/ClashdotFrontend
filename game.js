@@ -190,9 +190,8 @@ function draw() {
   const camX = me.x - canvas.width / 2;
   const camY = me.y - canvas.height / 2;
 
-  ctx.fillStyle = 'black';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = '#31bd70';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
   drawGrid(camX, camY);
 
   for (const id in allPlayers) {
