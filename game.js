@@ -173,7 +173,11 @@ function drawGrid(camX, camY) {
 }
 
 function draw() {
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = 'black'; ctx.fillRect(0, 0, canvas.width, canvas.height)
+  
   if (!playerId || !allPlayers[playerId]) {
     requestAnimationFrame(draw);
     return;
