@@ -41,9 +41,11 @@ startButton.onclick = () => {
     initSocket();
 
     // Add test items
-    inventory[0] = { name: 'Sword', icon: '🗡️' };
-    inventory[1] = { name: 'Potion', icon: '🧪' };
-    inventory[2] = { name: 'Shield', icon: '🛡️' };
+    inventory[0] = { name: 'Basic', icon: '⚪' };
+    inventory[1] = { name: 'Basic', icon: '⚪' };
+    inventory[2] = { name: 'Basic', icon: '⚪' };
+    inventory[3] = { name: 'Basic', icon: '⚪' };
+    inventory[4] = { name: 'Basic', icon: '⚪' };
   }
 };
 
