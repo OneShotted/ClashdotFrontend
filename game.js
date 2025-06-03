@@ -207,7 +207,59 @@ function draw() {
     const p = allPlayers[id];
     const x = p.x - camX;
     const y = p.y - camY;
-  
+   
+    ctx.beginPath();
+  if (p.isDev) {
+  // Draw dev shape
+ ctx.beginPath();
+const radius = 20;
+for (let i = 0; i < 6; i++) {
+  const angle = Math.PI / 3 * i;
+  const px = x + radius * Math.cos(angle);
+  const py = y + radius * Math.sin(angle);
+  if (i === 0) {
+    ctx.moveTo(px, py);
+  } else {
+    ctx.lineTo(px, py);
+  }
+}
+ctx.closePath();
+ctx.fillStyle = 'blue';
+ctx.fill();
+  // Draw dev eyes
+  ctx.fillStyle = 'black';
+  ctx.beginPath();
+  ctx.arc(x - 7, y - 5, 2, 0, Math.PI * 2); // Left eye
+  ctx.arc(x + 7, y - 5, 2, 0, Math.PI * 2); // Right eye
+  ctx.fill();
+
+  // Draw dev frown
+  ctx.beginPath();
+  ctx.arc(x, y + 10, 7, Math.PI, 0); // Upside-down arc for frown
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+    } else {
+     // Draw player body
+ctx.beginPath();
+ctx.arc(x, y, 20, 0, Math.PI * 2);
+ctx.fillStyle = 'yellow';
+ctx.fill();
+
+// Draw eyes
+ctx.fillStyle = 'black';
+ctx.beginPath();
+ctx.arc(x - 7, y - 5, 2, 0, Math.PI * 2); // Left eye
+ctx.arc(x + 7, y - 5, 2, 0, Math.PI * 2); // Right eye
+ctx.fill();
+
+// Draw smile
+ctx.beginPath();
+ctx.arc(x, y + 2, 7, 0, Math.PI); // Smile (half circle)
+ctx.strokeStyle = 'black';
+ctx.lineWidth = 1;
+ctx.stroke();
+    }
 
     ctx.fillStyle = 'black';
     ctx.font = '14px sans-serif';
