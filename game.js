@@ -166,7 +166,7 @@ broadcastBtn.onclick = () => {
 };
 
 const keys = { up: false, down: false, left: false, right: false };
-
+let isMouseDown = false;
 document.addEventListener('keydown', (e) => {
   if (document.activeElement === chatInput) return;
 
@@ -185,6 +185,14 @@ document.addEventListener('keyup', (e) => {
   if (key === 'arrowdown' || key === 's') keys.down = false;
   if (key === 'arrowleft' || key === 'a') keys.left = false;
   if (key === 'arrowright' || key === 'd') keys.right = false;
+});
+// Track left mouse button state
+canvas.addEventListener('mousedown', (e) => {
+  if (e.button === 0) isMouseDown = true;
+});
+
+canvas.addEventListener('mouseup', (e) => {
+  if (e.button === 0) isMouseDown = false;
 });
 
 document.addEventListener('keypress', (e) => {
@@ -333,7 +341,7 @@ ctx.stroke();
   }
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
-const orbitRadius = 40;
+const orbitRadius = isMouseDown ? 90 : 40;
 const angleStep = (Math.PI * 2) / inventory.length;
 const currentTime = Date.now() / 1000;
 
