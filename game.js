@@ -29,7 +29,7 @@ const broadcastBtn = document.getElementById('broadcast-btn');
 // autojoin code
 const autojoin = document.getElementById('autojoin')
 const localAutojoin = localStorage.getItem('clashdot-autojoin')
-if (localAutoJoin === true) {
+if (localAutojoin === true) {
   const username = localStorage.getItem('clashdot-username')
   if (username) {
     autojoin.checked = true
