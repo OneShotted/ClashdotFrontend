@@ -113,6 +113,11 @@ function initSocket() {
       chatLog.scrollTop = chatLog.scrollHeight;
     }
   };
+  const leaveBtn = document.getElementById('leave-game');
+leaveBtn.onclick = () => {
+  stop();
+};
+
 }
 
 sendChatBtn.onclick = () => {
