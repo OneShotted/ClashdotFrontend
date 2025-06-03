@@ -80,6 +80,7 @@ function start(rawName) {
 }
 
 function stop() {
+  canvas.clearRect(0, 0, canvas.width, canvas.height)
   socket.send(JSON.stringify({ type: 'leaveGame' }))
   usernameScreen.style.display = 'flex';
   chatContainer.style.display = 'none';
