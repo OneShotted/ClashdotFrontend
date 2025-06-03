@@ -96,7 +96,6 @@ body {
   width: 500px;
   height: 100px;
   display: flex;
-  background-color: gray;
   flex-direction: row;
   gap: 10px;
   align-items: center;
@@ -115,7 +114,7 @@ body {
   top: 100px;
   left: 100px;
   z-index: 15;
-  
+  background-color: gray;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
