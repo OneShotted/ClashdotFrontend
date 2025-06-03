@@ -31,8 +31,15 @@
     </div>
   </div>
 
-  <!-- Changelog Toggle Button -->
-  <button id="changelog-toggle">Changelog</button>
+  <div id='menu-bar'>
+    <button id="changelog-toggle">Changelog</button>
+    
+    <a id="discord-button" href="https://discord.gg/mCbW7cUd9C" target="_blank">
+      <img src="https://img.icons8.com/ios-filled/50/000000/discord-logo.png" alt="Discord" />
+    </a>
+
+    <button id='leave-game'>Leave</button>
+  </div>
 
   <!-- Changelog (Hidden by Default) -->
   <div id="changelog" style="display: none;">
@@ -46,10 +53,6 @@
       <li>A1.0 - Initial Alpha release</li>
     </ul>
   </div>
-
-  <a id="discord-button" href="https://discord.gg/mCbW7cUd9C" target="_blank">
-    <img src="https://img.icons8.com/ios-filled/50/000000/discord-logo.png" alt="Discord" />
-  </a>
 
   <script>
     document.getElementById('changelog-toggle').addEventListener('click', () => {
