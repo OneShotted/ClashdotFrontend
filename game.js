@@ -331,7 +331,6 @@ ctx.stroke();
       ctx.fillText(inventory[i].icon, x + slotSize / 2, y + slotSize / 1.5);
     }
   }
-// Orbiting inventory icons around player
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
 const orbitRadius = 40;
@@ -345,13 +344,16 @@ for (let i = 0; i < inventory.length; i++) {
   const iconX = centerX + orbitRadius * Math.cos(angle);
   const iconY = centerY + orbitRadius * Math.sin(angle);
 
-  ctx.beginPath();
-  ctx.arc(iconX, iconY, 20, 0, Math.PI * 2);
-  ctx.fillStyle = 'white';
-  ctx.fill();
-  ctx.strokeStyle = (i === selectedItemIndex) ? 'gold' : 'black';
-  ctx.lineWidth = 2;
-  ctx.stroke();
+  // Remove background circle
+
+  // Optional: Highlight selected item with outline only
+  if (i === selectedItemIndex) {
+    ctx.beginPath();
+    ctx.arc(iconX, iconY, 20, 0, Math.PI * 2);
+    ctx.strokeStyle = 'gold';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
 
   ctx.fillStyle = 'black';
   ctx.font = '20px sans-serif';
@@ -359,6 +361,7 @@ for (let i = 0; i < inventory.length; i++) {
   ctx.textBaseline = 'middle';
   ctx.fillText(inventory[i].icon, iconX, iconY);
 }
+
 
   requestAnimationFrame(draw);
 }
