@@ -201,15 +201,22 @@ function draw() {
 
     ctx.beginPath();
   if (p.isDev) {
-  // Draw dev triangle
-  ctx.beginPath();
-  ctx.moveTo(x, y - 20);
-  ctx.lineTo(x - 20, y + 20);
-  ctx.lineTo(x + 20, y + 20);
-  ctx.closePath();
-  ctx.fillStyle = 'blue';
-  ctx.fill();
-
+  // Draw dev shape
+ ctx.beginPath();
+const radius = 20;
+for (let i = 0; i < 6; i++) {
+  const angle = Math.PI / 3 * i;
+  const px = x + radius * Math.cos(angle);
+  const py = y + radius * Math.sin(angle);
+  if (i === 0) {
+    ctx.moveTo(px, py);
+  } else {
+    ctx.lineTo(px, py);
+  }
+}
+ctx.closePath();
+ctx.fillStyle = 'blue';
+ctx.fill();
   // Draw dev eyes
   ctx.fillStyle = 'black';
   ctx.beginPath();
