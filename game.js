@@ -331,6 +331,36 @@ ctx.stroke();
       ctx.fillText(inventory[i].icon, x + slotSize / 2, y + slotSize / 1.5);
     }
   }
+const centerX = canvas.width / 2;
+const centerY = canvas.height / 2;
+const orbitRadius = 40;
+const angleStep = (Math.PI * 2) / inventory.length;
+const currentTime = Date.now() / 1000;
+
+for (let i = 0; i < inventory.length; i++) {
+  if (!inventory[i]) continue;
+
+  const angle = currentTime + i * angleStep;
+  const iconX = centerX + orbitRadius * Math.cos(angle);
+  const iconY = centerY + orbitRadius * Math.sin(angle);
+
+  // Remove background circle
+
+  // Optional: Highlight selected item with outline only
+  if (i === selectedItemIndex) {
+    ctx.beginPath();
+    ctx.arc(iconX, iconY, 20, 0, Math.PI * 2);
+    ctx.strokeStyle = 'gold';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = 'black';
+  ctx.font = '20px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(inventory[i].icon, iconX, iconY);
+}
 
   requestAnimationFrame(draw);
 }
