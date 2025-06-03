@@ -212,7 +212,7 @@ function draw() {
 ctx.arc(x, y, 20, 0, Math.PI * 2);
 ctx.fillStyle = 'yellow';
 ctx.fill();
-    }
+    
 
     ctx.fillStyle = 'black';
     ctx.font = '14px sans-serif';
