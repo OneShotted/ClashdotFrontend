@@ -207,35 +207,7 @@ function draw() {
     const p = allPlayers[id];
     const x = p.x - camX;
     const y = p.y - camY;
-  }
-  if (p.isDev) {
-  // Draw dev triangle
-  ctx.beginPath();
-  ctx.moveTo(x, y - 20);
-  ctx.lineTo(x - 20, y + 20);
-  ctx.lineTo(x + 20, y + 20);
-  ctx.closePath();
-  ctx.fillStyle = 'blue';
-  ctx.fill();
-
-  // Draw dev eyes
-  ctx.fillStyle = 'black';
-  ctx.beginPath();
-  ctx.arc(x - 7, y - 5, 2, 0, Math.PI * 2); // Left eye
-  ctx.arc(x + 7, y - 5, 2, 0, Math.PI * 2); // Right eye
-  ctx.fill();
-
-  // Draw dev frown
-  ctx.beginPath();
-  ctx.arc(x, y + 10, 7, Math.PI, 0); // Upside-down arc for frown
-  ctx.strokeStyle = 'black';
-  ctx.lineWidth = 1;
-  ctx.stroke();
-  ctx.beginPath();
-ctx.arc(x, y, 20, 0, Math.PI * 2);
-ctx.fillStyle = 'yellow';
-ctx.fill();
-    
+  
 
     ctx.fillStyle = 'black';
     ctx.font = '14px sans-serif';
