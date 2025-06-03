@@ -9,6 +9,9 @@ let allPlayers = {};
 let playerName = '';
 let isDev = false;
 
+let inventory = new Array(5).fill(null);
+let selectedItemIndex = null;
+
 const usernameScreen = document.getElementById('username-screen');
 const usernameInput = document.getElementById('username-input');
 const startButton = document.getElementById('start-button');
@@ -36,6 +39,11 @@ startButton.onclick = () => {
     chatContainer.style.display = 'flex';
     if (isDev) devPanel.style.display = 'block';
     initSocket();
+
+    // Add test items
+    inventory[0] = { name: 'Sword', icon: '🗡️' };
+    inventory[1] = { name: 'Potion', icon: '🧪' };
+    inventory[2] = { name: 'Shield', icon: '🛡️' };
   }
 };
 
@@ -69,7 +77,7 @@ function initSocket() {
 }
 
 sendChatBtn.onclick = () => {
-  sendMsg()
+  sendMsg();
 };
 
 function sendMsg() {
@@ -113,12 +121,11 @@ broadcastBtn.onclick = () => {
   }
 };
 
-// Key state tracking
 const keys = { up: false, down: false, left: false, right: false };
 
 document.addEventListener('keydown', (e) => {
   if (document.activeElement === chatInput) return;
-  
+
   const key = e.key.toLowerCase();
   if (key === 'arrowup' || key === 'w') keys.up = true;
   if (key === 'arrowdown' || key === 's') keys.down = true;
@@ -128,7 +135,7 @@ document.addEventListener('keydown', (e) => {
 
 document.addEventListener('keyup', (e) => {
   if (document.activeElement === chatInput) return;
-  
+
   const key = e.key.toLowerCase();
   if (key === 'arrowup' || key === 'w') keys.up = false;
   if (key === 'arrowdown' || key === 's') keys.down = false;
@@ -146,7 +153,6 @@ document.addEventListener('keypress', (e) => {
     }
   }
 });
-
 
 function gameLoop() {
   if (playerId && socket && socket.readyState === WebSocket.OPEN) {
@@ -177,10 +183,11 @@ function drawGrid(camX, camY) {
 }
 
 function draw() {
-  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-  
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
+
   if (!playerId || !allPlayers[playerId]) {
     requestAnimationFrame(draw);
     return;
@@ -200,57 +207,9 @@ function draw() {
     const y = p.y - camY;
 
     ctx.beginPath();
-  if (p.isDev) {
-  // Draw dev shape
- ctx.beginPath();
-const radius = 20;
-for (let i = 0; i < 6; i++) {
-  const angle = Math.PI / 3 * i;
-  const px = x + radius * Math.cos(angle);
-  const py = y + radius * Math.sin(angle);
-  if (i === 0) {
-    ctx.moveTo(px, py);
-  } else {
-    ctx.lineTo(px, py);
-  }
-}
-ctx.closePath();
-ctx.fillStyle = 'blue';
-ctx.fill();
-  // Draw dev eyes
-  ctx.fillStyle = 'black';
-  ctx.beginPath();
-  ctx.arc(x - 7, y - 5, 2, 0, Math.PI * 2); // Left eye
-  ctx.arc(x + 7, y - 5, 2, 0, Math.PI * 2); // Right eye
-  ctx.fill();
-
-  // Draw dev frown
-  ctx.beginPath();
-  ctx.arc(x, y + 10, 7, Math.PI, 0); // Upside-down arc for frown
-  ctx.strokeStyle = 'black';
-  ctx.lineWidth = 1;
-  ctx.stroke();
-    } else {
-     // Draw player body
-ctx.beginPath();
-ctx.arc(x, y, 20, 0, Math.PI * 2);
-ctx.fillStyle = 'yellow';
-ctx.fill();
-
-// Draw eyes
-ctx.fillStyle = 'black';
-ctx.beginPath();
-ctx.arc(x - 7, y - 5, 2, 0, Math.PI * 2); // Left eye
-ctx.arc(x + 7, y - 5, 2, 0, Math.PI * 2); // Right eye
-ctx.fill();
-
-// Draw smile
-ctx.beginPath();
-ctx.arc(x, y + 2, 7, 0, Math.PI); // Smile (half circle)
-ctx.strokeStyle = 'black';
-ctx.lineWidth = 1;
-ctx.stroke();
-    }
+    ctx.arc(x, y, 20, 0, Math.PI * 2);
+    ctx.fillStyle = 'yellow';
+    ctx.fill();
 
     ctx.fillStyle = 'black';
     ctx.font = '14px sans-serif';
@@ -258,6 +217,48 @@ ctx.stroke();
     ctx.fillText(p.name, x, y - 30);
   }
 
+  // Draw inventory
+  const slotSize = 50;
+  const padding = 10;
+  const startX = canvas.width / 2 - ((slotSize + padding) * inventory.length - padding) / 2;
+  const y = canvas.height - slotSize - 10;
+
+  for (let i = 0; i < inventory.length; i++) {
+    const x = startX + i * (slotSize + padding);
+
+    ctx.fillStyle = 'white';
+    ctx.fillRect(x, y, slotSize, slotSize);
+    ctx.strokeStyle = i === selectedItemIndex ? 'gold' : 'black';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x, y, slotSize, slotSize);
+
+    if (inventory[i]) {
+      ctx.fillStyle = 'black';
+      ctx.font = '24px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(inventory[i].icon, x + slotSize / 2, y + slotSize / 1.5);
+    }
+  }
+
   requestAnimationFrame(draw);
 }
 draw();
+
+canvas.addEventListener('click', (e) => {
+  const slotSize = 50;
+  const padding = 10;
+  const startX = canvas.width / 2 - ((slotSize + padding) * inventory.length - padding) / 2;
+  const y = canvas.height - slotSize - 10;
+
+  for (let i = 0; i < inventory.length; i++) {
+    const x = startX + i * (slotSize + padding);
+    if (
+      e.clientX >= x && e.clientX <= x + slotSize &&
+      e.clientY >= y && e.clientY <= y + slotSize
+    ) {
+      selectedItemIndex = i;
+      console.log('Selected:', inventory[i]);
+    }
+  }
+});
+
