@@ -33,7 +33,7 @@ if (username) {
   usernameInput.value = username
   const localAutojoin = (localStorage.getItem('clashdot-autojoin') === 'true')
   if (localAutojoin) {
-    autojoin.checked = true
+    autojoin.checked = false
     const rawName = (localStorage.getItem('clashdot-isdev') === 'true') ? `${username}#1627` : username;
     //console.log(rawName)
     start(rawName)
