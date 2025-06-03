@@ -40,7 +40,7 @@ if (localAutojoin === true) {
 }
 
 window.addEventListener('beforeunload', function(e) {
-  e.preventDefault();
+  //e.preventDefault();
   localStorage.setItem('clashdot-username', playerName)
   localStorage.setItem('clashdot-isdev', isDev)
   localStorage.setItem('clashdot-autojoin', autojoin.checked)
