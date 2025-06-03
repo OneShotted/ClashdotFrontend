@@ -25,8 +25,37 @@ const devPlayerList = document.getElementById('dev-player-list');
 const broadcastInput = document.getElementById('broadcast-input');
 const broadcastBtn = document.getElementById('broadcast-btn');
 
+
+// autojoin code
+const autojoin = document.getElementById('autojoin')
+const localAutojoin = localStorage.getItem('clashdot-autojoin')
+if (localAutoJoin === true) {
+  const username = localStorage.getItem('clashdot-username')
+  if (username) {
+    autojoin.checked = true
+    const rawName = localStorage.getItem('clashdot-isdev') ? `${username}#1627` : username;
+    console.log(rawName)
+    //start(rawName)
+  }
+}
+
+window.addEventListener('beforeunload', function(e) {
+  e.preventDefault();
+  localStorage.setItem('clashdot-username', playerName)
+  localStorage.setItem('clashdot-isdev', isDev)
+  localStorage.setItem('clashdot-autojoin', autojoin.checked)
+});
+
+
+
+
+
+
 startButton.onclick = () => {
-  const rawName = usernameInput.value.trim();
+  start(usernameInput.value.trim())
+};
+
+function start(rawName) {
   if (rawName) {
     if (rawName.includes('#1627')) {
       isDev = true;
@@ -47,7 +76,7 @@ startButton.onclick = () => {
     inventory[3] = { name: 'Basic', icon: '⚪' };
     inventory[4] = { name: 'Basic', icon: '⚪' };
   }
-};
+}
 
 function initSocket() {
   socket = new WebSocket('wss://websocket-vavu.onrender.com');
