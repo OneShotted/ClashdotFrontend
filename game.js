@@ -207,6 +207,7 @@ function draw() {
     const p = allPlayers[id];
     const x = p.x - camX;
     const y = p.y - camY;
+  }
   if (p.isDev) {
   // Draw dev triangle
   ctx.beginPath();
