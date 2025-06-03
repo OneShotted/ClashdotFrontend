@@ -111,8 +111,8 @@ body {
 
 #changelog {
   position: fixed;
-  top: 100px;
-  left: 100px;
+  top: 50px;
+  left: 30px;
   z-index: 15;
   background-color: gray;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
