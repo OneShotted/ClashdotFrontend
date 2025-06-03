@@ -27,7 +27,7 @@ const broadcastBtn = document.getElementById('broadcast-btn');
 
 
 // autojoin code
-const autojoin = document.getElementById('autojoin')
+// (i need to reset it rq) const autojoin = document.getElementById('autojoin')
 const username = localStorage.getItem('clashdot-username')
 if (username) {
   usernameInput.value = username
