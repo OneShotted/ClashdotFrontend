@@ -8,6 +8,7 @@ let playerId = null;
 let allPlayers = {};
 let playerName = '';
 let isDev = false;
+let inventory = new Array(5).fill(null); // 5 inventory slots, initially empty
 
 const usernameScreen = document.getElementById('username-screen');
 const usernameInput = document.getElementById('username-input');
