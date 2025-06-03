@@ -209,7 +209,7 @@ function draw() {
       ctx.fill();
     } else {
       ctx.arc(x, y, 20, 0, Math.PI * 2);
-      ctx.fillStyle = id === playerId ? 'blue' : 'red';
+      ctx.fillStyle = 'yellow';
       ctx.fill();
     }
 
