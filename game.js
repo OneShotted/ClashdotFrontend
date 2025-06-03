@@ -338,7 +338,7 @@ ctx.stroke();
       ctx.textAlign = 'center';
       ctx.fillText(inventory[i].icon, x + slotSize / 2, y + slotSize / 1.5);
     }
-  }
+
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
 const orbitRadius = isMouseDown ? 90 : 40; // 👈 Extended when holding
@@ -367,7 +367,7 @@ for (let i = 0; i < inventory.length; i++) {
   ctx.fillText(inventory[i].icon, iconX, iconY);
 }
 
-  }
+
 
   ctx.fillStyle = 'black';
   ctx.font = '20px sans-serif';
