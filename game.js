@@ -340,7 +340,7 @@ const currentTime = Date.now() / 1000;
 for (let i = 0; i < inventory.length; i++) {
   if (!inventory[i]) continue;
 
-  const angle = currentTime + i * angleStep;
+  const angle = currentTime * 1.5 + i * angleStep;
   const iconX = centerX + orbitRadius * Math.cos(angle);
   const iconY = centerY + orbitRadius * Math.sin(angle);
 
