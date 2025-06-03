@@ -166,7 +166,7 @@ broadcastBtn.onclick = () => {
 };
 
 const keys = { up: false, down: false, left: false, right: false };
-
+let isMouseDown = false;
 document.addEventListener('keydown', (e) => {
   if (document.activeElement === chatInput) return;
 
@@ -179,6 +179,14 @@ document.addEventListener('keydown', (e) => {
 
 document.addEventListener('keyup', (e) => {
   if (document.activeElement === chatInput) return;
+// Track left mouse button state
+canvas.addEventListener('mousedown', (e) => {
+  if (e.button === 0) isMouseDown = true;
+});
+
+canvas.addEventListener('mouseup', (e) => {
+  if (e.button === 0) isMouseDown = false;
+});
 
   const key = e.key.toLowerCase();
   if (key === 'arrowup' || key === 'w') keys.up = false;
@@ -333,26 +341,32 @@ ctx.stroke();
   }
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
-const orbitRadius = 40;
+const orbitRadius = isMouseDown ? 90 : 40; // 👈 Extended when holding
 const angleStep = (Math.PI * 2) / inventory.length;
 const currentTime = Date.now() / 1000;
 
 for (let i = 0; i < inventory.length; i++) {
   if (!inventory[i]) continue;
 
-  const angle = currentTime * 2 + i * angleStep;
+  const angle = currentTime + i * angleStep;
   const iconX = centerX + orbitRadius * Math.cos(angle);
   const iconY = centerY + orbitRadius * Math.sin(angle);
 
-  // Remove background circle
-
-  // Optional: Highlight selected item with outline only
   if (i === selectedItemIndex) {
     ctx.beginPath();
     ctx.arc(iconX, iconY, 20, 0, Math.PI * 2);
     ctx.strokeStyle = 'gold';
     ctx.lineWidth = 2;
     ctx.stroke();
+  }
+
+  ctx.fillStyle = 'black';
+  ctx.font = '20px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(inventory[i].icon, iconX, iconY);
+}
+
   }
 
   ctx.fillStyle = 'black';
