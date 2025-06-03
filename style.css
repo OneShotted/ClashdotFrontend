@@ -89,16 +89,22 @@ body {
   margin-bottom: 4px;
 }
 
-#changelog {
-  position: fixed;
-  top: 70px;
-  left: 20px;
-  width: 300px;
+#menu-bar {
+  z-index: 15;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+}
+
+.menu-button {
   background: #f0f0f0;
   border-radius: 8px;
   padding: 10px;
-  z-index: 15;
   font-size: 14px;
+}
+
+#changelog {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -109,15 +115,6 @@ body {
 .red-message {
   color: red;
   font-weight: bold;
-}
-
-#discord-button {
-  position: fixed;
-  top: 20px;
-  left: 330px;
-  width: 40px;
-  height: 40px;
-  z-index: 16;
 }
 
 #discord-button img {
