@@ -35,8 +35,8 @@ if (username) {
   if (localAutojoin) {
     autojoin.checked = true
     const rawName = (localStorage.getItem('clashdot-isdev') === 'true') ? `${username}#1627` : username;
-    console.log(rawName)
-  //start(rawName)
+    //console.log(rawName)
+    start(rawName)
   }
 }
 
