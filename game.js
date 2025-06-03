@@ -208,25 +208,10 @@ function draw() {
     const x = p.x - camX;
     const y = p.y - camY;
 
-  // Draw player body
-ctx.beginPath();
+  ctx.beginPath();
 ctx.arc(x, y, 20, 0, Math.PI * 2);
 ctx.fillStyle = 'yellow';
 ctx.fill();
-
-// Draw eyes
-ctx.fillStyle = 'black';
-ctx.beginPath();
-ctx.arc(x - 7, y - 5, 2, 0, Math.PI * 2); // Left eye
-ctx.arc(x + 7, y - 5, 2, 0, Math.PI * 2); // Right eye
-ctx.fill();
-
-// Draw smile
-ctx.beginPath();
-ctx.arc(x, y + 2, 7, 0, Math.PI); // Smile (half circle)
-ctx.strokeStyle = 'black';
-ctx.lineWidth = 1;
-ctx.stroke();
     }
 
     ctx.fillStyle = 'black';
