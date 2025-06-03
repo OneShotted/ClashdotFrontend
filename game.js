@@ -28,12 +28,13 @@ const broadcastBtn = document.getElementById('broadcast-btn');
 
 // autojoin code
 const autojoin = document.getElementById('autojoin')
-const localAutojoin = localStorage.getItem('clashdot-autojoin')
-if (localAutojoin === true) {
+const localAutojoin = (localStorage.getItem('clashdot-autojoin') === 'true')
+if (localAutojoin) {
   const username = localStorage.getItem('clashdot-username')
   if (username) {
+    usernameInput.value = username
     autojoin.checked = true
-    const rawName = localStorage.getItem('clashdot-isdev') ? `${username}#1627` : username;
+    const rawName = (localStorage.getItem('clashdot-isdev') === 'true') ? `${username}#1627` : username;
     console.log(rawName)
     //start(rawName)
   }
