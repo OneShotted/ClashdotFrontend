@@ -79,6 +79,12 @@ function start(rawName) {
   }
 }
 
+function stop() {
+  socket.send(JSON.stringify({ type: 'leaveGame' }))
+  usernameScreen.style.display = 'flex';
+  chatContainer.style.display = 'none';
+}
+
 function initSocket() {
   socket = new WebSocket('wss://websocket-vavu.onrender.com');
 
