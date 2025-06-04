@@ -428,6 +428,37 @@ function handleItemDrop(source, target) {
 
   renderInventoryGrid();
 }
+function renderHotbarDropTargets() {
+  const slotSize = 50;
+  const padding = 10;
+  const startX = canvas.width / 2 - ((slotSize + padding) * inventory.length - padding) / 2;
+  const y = canvas.height - slotSize - 10;
+
+  for (let i = 0; i < inventory.length; i++) {
+    const hotbarSlot = document.createElement('div');
+    hotbarSlot.className = 'inventory-slot';
+    hotbarSlot.style.position = 'absolute';
+    hotbarSlot.style.left = `${startX + i * (slotSize + padding)}px`;
+    hotbarSlot.style.top = `${y}px`;
+    hotbarSlot.style.zIndex = 30;
+    hotbarSlot.dataset.index = i;
+    hotbarSlot.draggable = true;
+
+    if (inventory[i]) hotbarSlot.textContent = inventory[i].icon;
+
+    hotbarSlot.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('source', `hotbar-${i}`);
+    });
+
+    hotbarSlot.addEventListener('dragover', (e) => e.preventDefault());
+    hotbarSlot.addEventListener('drop', (e) => {
+      const source = e.dataTransfer.getData('source');
+      handleItemDrop(source, `hotbar-${i}`);
+    });
+
+    document.body.appendChild(hotbarSlot);
+  }
+}
 
 canvas.addEventListener('click', (e) => {
   const slotSize = 50;
