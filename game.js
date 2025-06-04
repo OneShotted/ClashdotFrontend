@@ -209,6 +209,12 @@ document.addEventListener('keypress', (e) => {
     }
   }
 });
+document.addEventListener('keydown', (e) => {
+  if (e.key.toLowerCase() === 'e') {
+    inventoryPanel.style.display = inventoryPanel.style.display === 'none' ? 'block' : 'none';
+    renderInventoryGrid();
+  }
+});
 
 function gameLoop() {
   if (playerId && socket && socket.readyState === WebSocket.OPEN) {
