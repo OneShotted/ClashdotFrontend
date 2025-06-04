@@ -19,6 +19,10 @@ const chatContainer = document.getElementById('chat-container');
 const chatLog = document.getElementById('chat-log');
 const chatInput = document.getElementById('chat-input');
 const sendChatBtn = document.getElementById('send-chat');
+const inventoryPanel = document.getElementById('inventory-panel');
+const inventoryGrid = document.getElementById('inventory-grid');
+
+let fullInventory = new Array(20).fill(null);
 
 const devPanel = document.getElementById('dev-panel');
 const devPlayerList = document.getElementById('dev-player-list');
