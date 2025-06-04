@@ -19,10 +19,6 @@ const chatContainer = document.getElementById('chat-container');
 const chatLog = document.getElementById('chat-log');
 const chatInput = document.getElementById('chat-input');
 const sendChatBtn = document.getElementById('send-chat');
-const inventoryPanel = document.getElementById('inventory-panel');
-const inventoryGrid = document.getElementById('inventory-grid');
-
-let fullInventory = new Array(20).fill(null);
 
 const devPanel = document.getElementById('dev-panel');
 const devPlayerList = document.getElementById('dev-player-list');
@@ -209,12 +205,6 @@ document.addEventListener('keypress', (e) => {
     }
   }
 });
-document.addEventListener('keydown', (e) => {
-  if (e.key.toLowerCase() === 'e') {
-    inventoryPanel.style.display = inventoryPanel.style.display === 'none' ? 'block' : 'none';
-    renderInventoryGrid();
-  }
-});
 
 function gameLoop() {
   if (playerId && socket && socket.readyState === WebSocket.OPEN) {
@@ -379,86 +369,10 @@ for (let i = 0; i < inventory.length; i++) {
   ctx.textBaseline = 'middle';
   ctx.fillText(inventory[i].icon, iconX, iconY);
 }
-function renderInventoryGrid() {
-  inventoryGrid.innerHTML = '';
-  for (let i = 0; i < fullInventory.length; i++) {
-    const slot = document.createElement('div');
-    slot.className = 'inventory-slot';
-    slot.dataset.index = i;
-    slot.draggable = true;
-
-    if (fullInventory[i]) {
-      slot.textContent = fullInventory[i].icon;
-    }
-
-    slot.addEventListener('dragstart', (e) => {
-      e.dataTransfer.setData('source', `inventory-${i}`);
-    });
-
-    slot.addEventListener('dragover', (e) => e.preventDefault());
-    slot.addEventListener('drop', (e) => {
-      const source = e.dataTransfer.getData('source');
-      handleItemDrop(source, `inventory-${i}`);
-    });
-
-    inventoryGrid.appendChild(slot);
-  }
-
-  // Re-render the hotbar slots as drop targets
-  renderHotbarDropTargets();
-}
 
   requestAnimationFrame(draw);
 }
 draw();
-function handleItemDrop(source, target) {
-  const [fromType, fromIndex] = source.split('-');
-  const [toType, toIndex] = target.split('-');
-
-  const fromI = parseInt(fromIndex);
-  const toI = parseInt(toIndex);
-
-  let fromArray = fromType === 'hotbar' ? inventory : fullInventory;
-  let toArray = toType === 'hotbar' ? inventory : fullInventory;
-
-  // Swap
-  const temp = fromArray[fromI];
-  fromArray[fromI] = toArray[toI];
-  toArray[toI] = temp;
-
-  renderInventoryGrid();
-}
-function renderHotbarDropTargets() {
-  const slotSize = 50;
-  const padding = 10;
-  const startX = canvas.width / 2 - ((slotSize + padding) * inventory.length - padding) / 2;
-  const y = canvas.height - slotSize - 10;
-
-  for (let i = 0; i < inventory.length; i++) {
-    const hotbarSlot = document.createElement('div');
-    hotbarSlot.className = 'inventory-slot';
-    hotbarSlot.style.position = 'absolute';
-    hotbarSlot.style.left = `${startX + i * (slotSize + padding)}px`;
-    hotbarSlot.style.top = `${y}px`;
-    hotbarSlot.style.zIndex = 30;
-    hotbarSlot.dataset.index = i;
-    hotbarSlot.draggable = true;
-
-    if (inventory[i]) hotbarSlot.textContent = inventory[i].icon;
-
-    hotbarSlot.addEventListener('dragstart', (e) => {
-      e.dataTransfer.setData('source', `hotbar-${i}`);
-    });
-
-    hotbarSlot.addEventListener('dragover', (e) => e.preventDefault());
-    hotbarSlot.addEventListener('drop', (e) => {
-      const source = e.dataTransfer.getData('source');
-      handleItemDrop(source, `hotbar-${i}`);
-    });
-
-    document.body.appendChild(hotbarSlot);
-  }
-}
 
 canvas.addEventListener('click', (e) => {
   const slotSize = 50;
