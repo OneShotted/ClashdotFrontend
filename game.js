@@ -379,6 +379,34 @@ for (let i = 0; i < inventory.length; i++) {
   ctx.textBaseline = 'middle';
   ctx.fillText(inventory[i].icon, iconX, iconY);
 }
+function renderInventoryGrid() {
+  inventoryGrid.innerHTML = '';
+  for (let i = 0; i < fullInventory.length; i++) {
+    const slot = document.createElement('div');
+    slot.className = 'inventory-slot';
+    slot.dataset.index = i;
+    slot.draggable = true;
+
+    if (fullInventory[i]) {
+      slot.textContent = fullInventory[i].icon;
+    }
+
+    slot.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('source', `inventory-${i}`);
+    });
+
+    slot.addEventListener('dragover', (e) => e.preventDefault());
+    slot.addEventListener('drop', (e) => {
+      const source = e.dataTransfer.getData('source');
+      handleItemDrop(source, `inventory-${i}`);
+    });
+
+    inventoryGrid.appendChild(slot);
+  }
+
+  // Re-render the hotbar slots as drop targets
+  renderHotbarDropTargets();
+}
 
   requestAnimationFrame(draw);
 }
