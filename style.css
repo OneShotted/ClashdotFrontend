@@ -153,6 +153,34 @@ body {
   background: #f0f0f0;
   border-radius: 8px;
 }
+#inventory-panel {
+  position: fixed;
+  top: 100px;
+  right: 50px;
+  background: #fff;
+  padding: 15px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  z-index: 20;
+}
+
+#inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 60px);
+  grid-gap: 10px;
+}
+
+.inventory-slot {
+  width: 60px;
+  height: 60px;
+  border: 2px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  font-size: 24px;
+  cursor: grab;
+}
 
 
 
