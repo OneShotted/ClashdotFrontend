@@ -411,6 +411,23 @@ function renderInventoryGrid() {
   requestAnimationFrame(draw);
 }
 draw();
+function handleItemDrop(source, target) {
+  const [fromType, fromIndex] = source.split('-');
+  const [toType, toIndex] = target.split('-');
+
+  const fromI = parseInt(fromIndex);
+  const toI = parseInt(toIndex);
+
+  let fromArray = fromType === 'hotbar' ? inventory : fullInventory;
+  let toArray = toType === 'hotbar' ? inventory : fullInventory;
+
+  // Swap
+  const temp = fromArray[fromI];
+  fromArray[fromI] = toArray[toI];
+  toArray[toI] = temp;
+
+  renderInventoryGrid();
+}
 
 canvas.addEventListener('click', (e) => {
   const slotSize = 50;
